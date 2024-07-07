@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
@@ -15,6 +16,9 @@ struct ParametricMeshVerticesJob : IJobFor
 
     [ReadOnly] public bool isRightCoordinateSystem;
 
+    public delegate void SamplingFunction(double u, double v, double w, out double x, out double y, out double z);
+    public FunctionPointer<SamplingFunction> parametricFunction;
+
     //Write
     public NativeArray<Vector3> outputVertices;
 
@@ -28,7 +32,7 @@ struct ParametricMeshVerticesJob : IJobFor
         float v = uMinDomain + j * ((vMaxDomain - vMinDomain) / (sampleresolution_V - 1));
         float u = uMinDomain + i * ((uMaxDomain - uMinDomain) / (sampleresolution_U - 1));
 
-        parametricFunction(u, v, w, out double x, out double y, out double z);
+        parametricFunction.Invoke(u, v, w, out double x, out double y, out double z);
 
         if (isRightCoordinateSystem)
         {
@@ -38,10 +42,10 @@ struct ParametricMeshVerticesJob : IJobFor
         outputVertices[index] = new Vector3((float)x, (float)y, (float)z);
     }
 
-    void parametricFunction(double u, double v, double w, out double x, out double y, out double z)
-    {
-        x = u;
-        y = v;
-        z = w;
-    }
+    //void parametricFunction(double u, double v, double w, out double x, out double y, out double z)
+    //{
+    //    x = u;
+    //    y = v;
+    //    z = w;
+    //}
 }

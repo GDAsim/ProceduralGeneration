@@ -37,9 +37,9 @@ public class ParametricMesh_Example : MonoBehaviour
         wMinDomain = -1;
         wMaxDomain = 1;
 
-        sampleresolution_U = 500;
-        sampleresolution_V = 500;
-        sampleresolution_W = 500;
+        sampleresolution_U = 100;
+        sampleresolution_V = 100;
+        sampleresolution_W = 100;
     }
 
     void Update()
@@ -67,9 +67,6 @@ public class ParametricMesh_Example : MonoBehaviour
     }
     void parametricSphereFunc(double u, double v, double w, out double x, out double y, out double z)
     {
-        u = (u * 2 * Math.PI);
-        v = (v * 2 * Math.PI);
-
         x = Math.Cos(u) * Math.Cos(v);
         y = Math.Sin(u) * Math.Cos(v);
         z = Math.Sin(v);

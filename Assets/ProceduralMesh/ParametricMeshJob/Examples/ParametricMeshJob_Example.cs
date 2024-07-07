@@ -1,4 +1,6 @@
-﻿using Unity.Collections;
+﻿using System.Runtime.InteropServices;
+using Unity.Burst;
+using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
@@ -43,9 +45,9 @@ public class ParametricMeshJob_Example : MonoBehaviour
         wMinDomain = -1;
         wMaxDomain = 1;
 
-        sampleresolution_U = 500;
-        sampleresolution_V = 500;
-        sampleresolution_W = 500;
+        sampleresolution_U = 100;
+        sampleresolution_V = 100;
+        sampleresolution_W = 100;
 
         var mesh = GetComponent<MeshFilter>().mesh;
         if (SystemInfo.supports32bitsIndexBuffer)
@@ -80,6 +82,13 @@ public class ParametricMeshJob_Example : MonoBehaviour
     JobHandle sheduleParralelJobHandle2;
     NativeList<int> outputIndices;
 
+    void parametricFunction(double u, double v, double w, out double x, out double y, out double z)
+    {
+        x = u;
+        y = v;
+        z = w;
+    }
+
     void StartMeshJob(bool isusingU, bool isusingV, bool isusingW,
         float uMinDomain, float uMaxDomain,
         float vMinDomain, float vMaxDomain,
@@ -112,6 +121,8 @@ public class ParametricMeshJob_Example : MonoBehaviour
         parametricMeshVerticesJob.sampleresolution_V = sampleresolution_V;
         parametricMeshVerticesJob.sampleresolution_W = sampleresolution_W;
         parametricMeshVerticesJob.isRightCoordinateSystem = isRightCoordinateSystem;
+        parametricMeshVerticesJob.parametricFunction = new FunctionPointer<ParametricMeshVerticesJob.SamplingFunction>(Marshal.GetFunctionPointerForDelegate((ParametricMeshVerticesJob.SamplingFunction)parametricFunction));
+
 
         outputVertices = new NativeArray<Vector3>(sampleresolution_U * sampleresolution_V * sampleresolution_W, Allocator.TempJob);
         parametricMeshVerticesJob.outputVertices = outputVertices;
