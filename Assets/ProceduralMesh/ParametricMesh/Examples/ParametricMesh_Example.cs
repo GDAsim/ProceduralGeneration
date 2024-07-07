@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ParametricMesh_Example : MonoBehaviour
@@ -37,11 +38,12 @@ public class ParametricMesh_Example : MonoBehaviour
         wMinDomain = -1;
         wMaxDomain = 1;
 
-        sampleresolution_U = 100;
-        sampleresolution_V = 100;
-        sampleresolution_W = 100;
+        sampleresolution_U = 2;
+        sampleresolution_V = 2;
+        sampleresolution_W = 2;
     }
 
+    List<Vector3> verts = new List<Vector3>();
     void Update()
     {
         if (Input.GetKey(KeyCode.Space))
@@ -56,6 +58,16 @@ public class ParametricMesh_Example : MonoBehaviour
                                     vMinDomain, vMaxDomain,
                                     wMinDomain, wMaxDomain,
                                     sampleresolution_U, sampleresolution_V, sampleresolution_W);
+
+            mesh.GetVertices(verts);
+        }
+    }
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        foreach (var v in verts)
+        {
+            Gizmos.DrawSphere(v, 0.05f);
         }
     }
 
