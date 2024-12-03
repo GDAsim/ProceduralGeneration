@@ -54,7 +54,7 @@ public class MarchingCubes
                 (j - sizeplus1.y / 2f) * size.y / resolution.y,
                 (k - sizeplus1.z / 2f) * size.z / resolution.z);
 
-            //obtain the cube value buffer of the index by running the samplining function over the position
+            //obtain the cube value buffer of the index by running the sampling function over the position
             sampleBuffer[i, j, k] = (float)implicitFunction(minCorner + offset);
         }
 
