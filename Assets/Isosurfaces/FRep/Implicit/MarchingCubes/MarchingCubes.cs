@@ -89,12 +89,14 @@ public class MarchingCubes
             #region Generate triangles
             int _currentIndex = 0;
 
+            // Max of 5 different triangles to be made based on possible config
             for (int tri = 0; tri < 5; tri++)
             {
                 int edgeIndex = a2iTriangleConnectionTable[flagIndex, 3 * tri];
                 if (edgeIndex < 0)
                     break;
 
+                // Loop though a triangle
                 for (int triCorner = 0; triCorner < 3; triCorner++)
                 {
                     edgeIndex = a2iTriangleConnectionTable[flagIndex, 3 * tri + triCorner];
