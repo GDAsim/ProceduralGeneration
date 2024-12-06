@@ -8,50 +8,186 @@ public class MarchingSquares
     /// </summary>
     float[,] bufferGrid; 
 
-    public delegate float SamplingFunction(float x, float y);
-
     int gridResolution;
-    List<Vector3> vertices;
-    List<int> indices;
 
     public void Setup(int gridResolution, float[,] inBuffer)
     {
         this.gridResolution = gridResolution;
         bufferGrid = inBuffer;
     }
-    public void Setup(int gridResolution, Vector2 noiseOffset, float noiseResolution = 1)
+    public List<(Vector3 p1,Vector3 p2)> MarchSquares_Lines(Vector3 vertexOffset, float binaryThreshold, float scale)
     {
-        this.gridResolution = gridResolution;
+        var lines = new List<(Vector3 p1, Vector3 p2)>();
 
-        // Set buffer
-        bufferGrid = new float[gridResolution + 1, gridResolution + 1];
-        for (int x = 0; x <= gridResolution; x++)
+        for (int x = 0; x < gridResolution; x++)
         {
-            for (int y = 0; y <= gridResolution; y++)
+            for (int y = 0; y < gridResolution; y++)
             {
-                bufferGrid[x, y] = Mathf.PerlinNoise(noiseOffset.x + (x * noiseResolution), noiseOffset.y + (y * noiseResolution));
+                var bl = bufferGrid[x, y] < binaryThreshold ? 0 : 1;
+                var br = bufferGrid[x + 1, y] < binaryThreshold ? 0 : 1;
+                var tr = bufferGrid[x + 1, y + 1] < binaryThreshold ? 0 : 1;
+                var tl = bufferGrid[x, y + 1] < binaryThreshold ? 0 : 1;
+                int bitflag = tl * 8 + tr * 4 + br * 2 + bl * 1;
+
+                var pos = new Vector3(x, y, 0);
+
+                List<(Vector3 p1, Vector3 p2)> localLines = new List<(Vector3 p1, Vector3 p2)>();
+                switch (bitflag)
+                {
+                    case 1:
+                        localLines.Add((new Vector3(0, 0.5f, 0), new Vector3(0.5f, 0, 0)));
+                        break;
+                    case 2:
+                        localLines.Add((new Vector3(0.5f, 0), new Vector3(1f, 0.5f)));
+                        break;
+                    case 3:
+                        localLines.Add((new Vector3(0f, 0.5f), new Vector3(1f, 0.5f)));
+                        break;
+                    case 4:
+                        localLines.Add((new Vector3(0.5f, 1f), new Vector3(1f, 0.5f)));
+                        break;
+                    case 5:
+                        localLines.Add((new Vector3(0f, 0.5f), new Vector3(0.5f, 0f)));
+                        localLines.Add((new Vector3(0.5f, 1f), new Vector3(1f, 0.5f)));
+                        break;
+                    case 6:
+                        localLines.Add((new Vector3(0.5f, 0f), new Vector3(0.5f, 1f)));
+                        break;
+                    case 7:
+                        localLines.Add((new Vector3(0f, 0.5f), new Vector3(0.5f, 1f)));
+                        break;
+                    case 8:
+                        localLines.Add((new Vector3(0f, 0.5f), new Vector3(0.5f, 1f)));
+                        break;
+                    case 9:
+                        localLines.Add((new Vector3(0.5f, 0f), new Vector3(0.5f, 1f)));
+                        break;
+                    case 10:
+                        localLines.Add((new Vector3(0f, 0.5f), new Vector3(0.5f, 1f)));
+                        localLines.Add((new Vector3(0.5f, 0f), new Vector3(1f, 0.5f)));
+                        break;
+                    case 11:
+                        localLines.Add((new Vector3(0.5f, 1f), new Vector3(1f, 0.5f)));
+                        break;
+                    case 12:
+                        localLines.Add((new Vector3(0f, 0.5f), new Vector3(1f, 0.5f)));
+                        break;
+                    case 13:
+                        localLines.Add((new Vector3(0.5f, 0), new Vector3(1f, 0.5f)));
+                        break;
+                    case 14:
+                        localLines.Add((new Vector3(0f, 0.5f), new Vector3(0.5f, 0f)));
+                        break;
+                    case 15:
+                        break;
+                }
+
+                foreach (var localline in localLines)
+                {
+                    var line = localline;
+                    line.p1 = (line.p1 + pos) * scale;
+                    line.p2 = (line.p2 + pos) * scale;
+                    lines.Add(line);
+                }
             }
         }
-    }
-    public void Setup(int gridResolution, SamplingFunction inputFunction)
-    {
-        this.gridResolution = gridResolution;
 
-        // Set buffer
-        bufferGrid = new float[gridResolution + 1, gridResolution + 1];
-        for (int x = 0; x <= gridResolution; x++)
+        return lines;
+    }
+    public List<(Vector3 p1,Vector3 p2)> MarchSquaresInterpolate_Lines(Vector3 vertexOffset, float binaryThreshold, float scale)
+    {
+        var lines = new List<(Vector3 p1, Vector3 p2)>();
+
+        for (int x = 0; x < gridResolution; x++)
         {
-            for (int y = 0; y <= gridResolution; y++)
+            for (int y = 0; y < gridResolution; y++)
             {
-                bufferGrid[x, y] = inputFunction(x , y);
+                var bl_value = bufferGrid[x, y];
+                var br_value = bufferGrid[x + 1, y];
+                var tr_value = bufferGrid[x + 1, y + 1];
+                var tl_value = bufferGrid[x, y + 1];
+
+                var bl = bufferGrid[x, y] < binaryThreshold ? 0 : 1;
+                var br = bufferGrid[x + 1, y] < binaryThreshold ? 0 : 1;
+                var tr = bufferGrid[x + 1, y + 1] < binaryThreshold ? 0 : 1;
+                var tl = bufferGrid[x, y + 1] < binaryThreshold ? 0 : 1;
+                int bitflag = tl * 8 + tr * 4 + br * 2 + bl * 1;
+
+                var pos = new Vector3(x, y, 0);
+
+                float basevalue = binaryThreshold;
+
+                List<(Vector3 p1, Vector3 p2)> localLines = new List<(Vector3 p1, Vector3 p2)>();
+                switch (bitflag)
+                {
+                    case 1 or 14:
+                        localLines.Add(
+                            (new Vector3(0, MathExtensions.remap(basevalue, bl_value, tl_value, 0, 1), 0),
+                            new Vector3(MathExtensions.remap(basevalue, bl_value, br_value, 0, 1), 0, 0)));
+                        break;
+                    case 2 or 13:
+                        localLines.Add(
+                            (new Vector3(MathExtensions.remap(basevalue, br_value, bl_value, 1, 0), 0),
+                            new Vector3(1f, MathExtensions.remap(basevalue, br_value, tr_value, 0, 1))));
+                        break;
+                    case 3 or 12:
+                        localLines.Add(
+                            (new Vector3(0f, MathExtensions.remap(basevalue, bl_value, tl_value, 0, 1)),
+                            new Vector3(1f, MathExtensions.remap(basevalue, br_value, tr_value, 0, 1))));
+                        break;
+                    case 4 or 11:
+                        localLines.Add(
+                            (new Vector3(MathExtensions.remap(basevalue, tr_value, tl_value, 1, 0), 1f),
+                            new Vector3(1f, MathExtensions.remap(basevalue, tr_value, br_value, 1, 0))));
+                        break;
+                    case 5:
+                        localLines.Add(
+                            (new Vector3(0f, MathExtensions.remap(basevalue, bl_value, tl_value, 0, 1)),
+                            new Vector3(MathExtensions.remap(basevalue, bl_value, br_value, 0, 1), 0f)));
+
+                        localLines.Add(
+                            (new Vector3(MathExtensions.remap(basevalue, tr_value, tl_value, 1, 0), 1f),
+                            new Vector3(1f, MathExtensions.remap(basevalue, tr_value, br_value, 1, 0))));
+                        break;
+                    case 6 or 9:
+                        localLines.Add(
+                            (new Vector3(MathExtensions.remap(basevalue, br_value, bl_value, 1, 0), 0f),
+                            new Vector3(MathExtensions.remap(basevalue, tr_value, tl_value, 1, 0), 1f)));
+                        break;
+                    case 7 or 8:
+                        localLines.Add(
+                            (new Vector3(0f, MathExtensions.remap(basevalue, bl_value, tl_value, 0, 1)),
+                            new Vector3(MathExtensions.remap(basevalue, tr_value, tl_value, 1, 0), 1f)));
+                        break;
+                    case 10:
+                        localLines.Add(
+                            (new Vector3(0f, MathExtensions.remap(basevalue, tl_value, bl_value, 1, 0)),
+                            new Vector3(MathExtensions.remap(basevalue, br_value, bl_value, 1, 0), 1f)));
+
+                        localLines.Add(
+                            (new Vector3(MathExtensions.remap(basevalue, tl_value, tr_value, 0, 1), 0f),
+                            new Vector3(1f, MathExtensions.remap(basevalue, br_value, tr_value, 0, 1))));
+                        break;
+                    case 15:
+                        break;
+                }
+
+                foreach (var localline in localLines)
+                {
+                    var line = localline;
+                    line.p1 = (line.p1 + pos) * scale;
+                    line.p2 = (line.p2 + pos) * scale;
+                    lines.Add(line);
+                }
             }
         }
-    }
 
-    public void MarchSquares(Vector3 vertexOffset,float binaryThreshold, float scale)
+        return lines;
+    }
+    public (List<Vector3> verts,List<int> indices) MarchSquares(Vector3 vertexOffset,float binaryThreshold, float scale)
     {
-        vertices = new();
-        indices = new();
+        var vertices = new List<Vector3>();
+        var indices = new List<int>();
 
         for (int x = 0; x < gridResolution; x++)
         {
@@ -334,11 +470,13 @@ public class MarchingSquares
                 }
             }
         }
+
+        return (vertices, indices);
     }
-    public void MarchSquaresInterpolate(Vector3 vertexOffset, float binaryThreshold, float scale)
+    public (List<Vector3> verts, List<int> indices) MarchSquaresInterpolate(Vector3 vertexOffset, float binaryThreshold, float scale)
     {
-        vertices = new();
-        indices = new();
+        var vertices = new List<Vector3>();
+        var indices = new List<int>();
 
         for (int x = 0; x < gridResolution; x++)
         {
@@ -426,7 +564,7 @@ public class MarchingSquares
                         break;
                     case 5:
                         verts = new Vector3[]
-                         {
+                        {
                             new Vector2(0, 0),
                             new Vector2(0, MathExtensions.remap(basevalue, bl_value, tl_value, 0, 1)),
                             new Vector2(MathExtensions.remap(basevalue, bl_value, br_value, 0, 1), 0),
@@ -434,7 +572,7 @@ public class MarchingSquares
                             new Vector2(MathExtensions.remap(basevalue, tr_value, tl_value, 1, 0), 1),
                             new Vector2(1, MathExtensions.remap(basevalue, tr_value, br_value, 1, 0)),
                             new Vector2(1, 1),
-                         };
+                        };
 
                         triangle = new int[]
                         {
@@ -630,16 +768,10 @@ public class MarchingSquares
                 }
             }
         }
+
+        return (vertices, indices);
     }
 
-    public List<Vector3> GetVerticies()
-    {
-        return vertices;
-    }
-    public List<int> GetIndices()
-    {
-        return indices;
-    }
     public float[,] GetBuffer()
     {
         return bufferGrid;

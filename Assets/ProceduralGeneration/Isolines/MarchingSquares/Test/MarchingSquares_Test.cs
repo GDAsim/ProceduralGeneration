@@ -19,7 +19,6 @@ public class MarchingSquares_Test : MonoBehaviour
 
     [Header("Sampling")]
     public float binarythreshold = 0.5f;
-    public bool UseSampling = true;
 
     [Header("Test")]
     [Range(0, 15)] public int CaseNum = 0;

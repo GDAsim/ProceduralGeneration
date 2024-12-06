@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -13,7 +12,7 @@ using UnityEngine;
 /// </summary>
 
 [ExecuteInEditMode]
-public class MarchingSquares_Example : MonoBehaviour
+public class MarchingSquares_Lines_Example : MonoBehaviour
 {
     [Header("Data")]
     public bool UseSamplingFunction = false;
@@ -28,15 +27,14 @@ public class MarchingSquares_Example : MonoBehaviour
     [Range(0.01f, 1f)] public float NoiseResolution = 0.1f;
     public Vector2 NoiseOffset = Vector2.zero;
 
-    [Header("Mesh")]
-    [SerializeField] MeshFilter meshFilter;
-
     [Header("Debug")]
     float gridPointSize = 0.5f; // Percentage of gridResolution
 
     MarchingSquares ms = new();
 
     float[,] bufferGrid;
+
+    List<(Vector3 p1, Vector3 p2)> lines;
     
     void Update()
     {
@@ -44,29 +42,15 @@ public class MarchingSquares_Example : MonoBehaviour
 
         ms.Setup(GridResolution, bufferGrid);
 
-        List<Vector3> vertices;
-        List<int> indices;
-
         // Run
         if (Interpolate)
         {
-            (vertices, indices) = ms.MarchSquaresInterpolate(Vector3.zero, BinaryThreshold, GridSize);
+            lines = ms.MarchSquaresInterpolate_Lines(Vector3.zero, BinaryThreshold, GridSize);
         }
         else
         {
-            (vertices, indices) = ms.MarchSquares(Vector3.zero, BinaryThreshold, GridSize);
+            lines = ms.MarchSquares_Lines(Vector3.zero, BinaryThreshold, GridSize);
         }
-
-        // Create Mesh
-        if (meshFilter == null) return;
-
-        if (vertices.Count == 0) return;
-        if (indices.Count == 0) return;
-
-        Mesh mesh = new();
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = indices.ToArray();
-        meshFilter.mesh = mesh;
     }
 
     void BuildBuffer()
@@ -116,6 +100,8 @@ public class MarchingSquares_Example : MonoBehaviour
         var pointSize = gridPointSize / 2 * GridSize;
 
         DrawDebugGridDots(pos, pointSize, ms.GetBuffer());
+
+        DrawIsolines(pos, lines);
     }
 
     void DrawDebugGridDots(Vector3 pos, float size, float[,] buffer)
@@ -130,6 +116,16 @@ public class MarchingSquares_Example : MonoBehaviour
                 Gizmos.color = new Color(1 - buffer[x, y], 1 - buffer[x, y], 1 - buffer[x, y]);
                 Gizmos.DrawSphere(pos + offset, size);
             }
+        }
+    }
+    void DrawIsolines(Vector3 pos, List<(Vector3 p1, Vector3 p2)> lines)
+    {
+        if (lines == null) return;
+
+        Gizmos.color = Color.red;
+        foreach (var (p1, p2) in lines)
+        {
+            Gizmos.DrawLine(pos + p1, pos + p2);
         }
     }
 }
