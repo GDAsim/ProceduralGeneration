@@ -193,6 +193,7 @@ public class MarchingSquares
         {
             for (int y = 0; y < gridResolution; y++)
             {
+                // Calculate Bitflag
                 var bl = bufferGrid[x, y] < binaryThreshold ? 0 : 1;
                 var br = bufferGrid[x + 1, y] < binaryThreshold ? 0 : 1;
                 var tr = bufferGrid[x + 1, y + 1] < binaryThreshold ? 0 : 1;
@@ -207,6 +208,8 @@ public class MarchingSquares
 
                 switch (bitflag)
                 {
+                    case 0 or 15:
+                        break;
                     case 1:
                         verts = new Vector3[]
                         {

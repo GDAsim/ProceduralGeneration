@@ -21,6 +21,7 @@ public class MarchingSquares_Example : MonoBehaviour
     [Header("Marching Squares")]
     [Range(0, 100)] public int GridResolution = 100;
     [Range(0, 10)] public float GridSize = 1;
+    public Vector3 GridPos = new Vector3(0, 0, 0);
     [Range(0, 1)] public float BinaryThreshold = 0.5f;
     public bool Interpolate = false;
 
@@ -50,11 +51,11 @@ public class MarchingSquares_Example : MonoBehaviour
         // Run
         if (Interpolate)
         {
-            (vertices, indices) = ms.MarchSquaresInterpolate(Vector3.zero, BinaryThreshold, GridSize);
+            (vertices, indices) = ms.MarchSquaresInterpolate(GridPos, BinaryThreshold, GridSize);
         }
         else
         {
-            (vertices, indices) = ms.MarchSquares(Vector3.zero, BinaryThreshold, GridSize);
+            (vertices, indices) = ms.MarchSquares(GridPos, BinaryThreshold, GridSize);
         }
 
         // Create Mesh
@@ -80,7 +81,7 @@ public class MarchingSquares_Example : MonoBehaviour
             {
                 for (int y = 0; y <= GridResolution; y++)
                 {
-                    bufferGrid[x, y] = inputFunction(x, y);
+                    bufferGrid[x, y] = Circle_Implicit(x, y);
                 }
             }
         }
@@ -97,7 +98,7 @@ public class MarchingSquares_Example : MonoBehaviour
             }
         }
 
-        float inputFunction(float posX, float posY)
+        float Circle_Implicit(float posX, float posY)
         {
             posX -= GridResolution / 2;
             posY -= GridResolution / 2;
