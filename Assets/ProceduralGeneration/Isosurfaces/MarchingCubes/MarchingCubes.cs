@@ -19,24 +19,24 @@ public class MarchingCubes
     /// </summary>
     float[,,] bufferGrid;
 
-    Vector3 gridResolution;
+    int gridResolution;
 
-    public void Setup(Vector3 gridResolution, float[,,] inBuffer)
+    public void Setup(int gridResolution, float[,,] inBuffer)
     {
         this.gridResolution = gridResolution;
         bufferGrid = inBuffer;
     }
     
-    public (List<Vector3>, List<int>) MarchCubes(Vector3 vertexOffset, float binaryThreshold, Vector3 size)
+    public (List<Vector3>, List<int>) MarchCubes(Vector3 originOffset, float binaryThreshold, float size)
     {
         var vertices = new List<Vector3>();
         var indices = new List<int>();
 
-        for (int x = 0; x < gridResolution.x; x++)
+        for (int x = 0; x < gridResolution; x++)
         {
-            for (int y = 0; y < gridResolution.y; y++)
+            for (int y = 0; y < gridResolution; y++)
             {
-                for (int z = 0; z < gridResolution.z; z++)
+                for (int z = 0; z < gridResolution; z++)
                 {
                     // Calculate Bitflag for the current "Cube"
                     int bitflag = 0;
@@ -55,7 +55,9 @@ public class MarchingCubes
                     if (bitflag == 0 || bitflag == 256) continue;
 
                     #region Generate triangles
-                    int _currentIndex = 0;
+                    var pos = new Vector3(x, y, z);
+
+                    int currentIndex = 0;
 
                     // Max of 5 different triangles to be made based on possible config
                     for (int triangle = 0; triangle < 5; triangle++)
@@ -71,32 +73,15 @@ public class MarchingCubes
 
                             Vector3 edge1I = EdgeOffsetTable[edgeIndex, 0];
                             Vector3 edge2I = EdgeOffsetTable[edgeIndex, 1];
-                            Vector3 edge1 = edge1I;
-                            Vector3 edge2 = edge2I;
+                            Vector3 edgeP1 = edge1I;
+                            Vector3 edgeP2 = edge2I;
 
-                            Vector3 middlePoint = Vector3.zero;
+                            var midPoint = (edgeP1 + edgeP2) * 0.5f;
 
-                            middlePoint = (edge1 + edge2) * 0.5f;
+                            Vector3 newVert = (midPoint + pos) * (size / gridResolution) + originOffset;
 
-                            // voxel world offset
-                            Vector3 offset = new Vector3(
-                                (x - gridResolution.x / 2f),
-                                (y - gridResolution.y / 2f),
-                                (z - gridResolution.z / 2f));
-
-                            Vector3 v = offset + middlePoint;
-                            v = new Vector3(
-                                v.x * size.x / gridResolution.x,
-                                v.y * size.y / gridResolution.y,
-                                v.z * size.z / gridResolution.z);
-
-                            Vector3 mid = new Vector3(
-                            vertexOffset.x - (size.x / gridResolution.x) / 2f,
-                            vertexOffset.y - (size.y / gridResolution.y) / 2f,
-                            vertexOffset.z - (size.z / gridResolution.z) / 2f);
-
-                            vertices.Add(mid + v);
-                            indices.Add(_currentIndex++);
+                            vertices.Add(newVert);
+                            indices.Add(currentIndex++);
                         }
                     }
                     #endregion
@@ -106,16 +91,16 @@ public class MarchingCubes
 
         return (vertices, indices);
     }
-    public (List<Vector3>, List<int>) MarchCubesInterpolate(Vector3 vertexOffset, float binaryThreshold, Vector3 size)
+    public (List<Vector3>, List<int>) MarchCubesInterpolate(Vector3 vertexOffset, float binaryThreshold, float size)
     {
         var vertices = new List<Vector3>();
         var indices = new List<int>();
 
-        for (int x = 0; x < gridResolution.x; x++)
+        for (int x = 0; x < gridResolution; x++)
         {
-            for (int y = 0; y < gridResolution.y; y++)
+            for (int y = 0; y < gridResolution; y++)
             {
-                for (int z = 0; z < gridResolution.z; z++)
+                for (int z = 0; z < gridResolution; z++)
                 {
                     // Calculate Bitflag for the current "Cube"
                     int bitflag = 0;
@@ -169,20 +154,20 @@ public class MarchingCubes
 
                             // voxel world offset
                             Vector3 offset = new Vector3(
-                                (x - gridResolution.x / 2f),
-                                (y - gridResolution.y / 2f),
-                                (z - gridResolution.z / 2f));
+                                (x - gridResolution / 2f),
+                                (y - gridResolution / 2f),
+                                (z - gridResolution / 2f));
 
                             Vector3 v = offset + middlePoint;
                             v = new Vector3(
-                                v.x * size.x / gridResolution.x,
-                                v.y * size.y / gridResolution.y,
-                                v.z * size.z / gridResolution.z);
+                                v.x * size / gridResolution,
+                                v.y * size / gridResolution,
+                                v.z * size / gridResolution);
 
                             Vector3 mid = new Vector3(
-                            vertexOffset.x - (size.x / gridResolution.x) / 2f,
-                            vertexOffset.y - (size.y / gridResolution.y) / 2f,
-                            vertexOffset.z - (size.z / gridResolution.z) / 2f);
+                            vertexOffset.x - (size / gridResolution) / 2f,
+                            vertexOffset.y - (size / gridResolution) / 2f,
+                            vertexOffset.z - (size / gridResolution) / 2f);
 
                             vertices.Add(mid + v);
                             indices.Add(_currentIndex++);
@@ -195,6 +180,10 @@ public class MarchingCubes
         return (vertices, indices);
     }
 
+    public float [,,] GetBuffer()
+    {
+        return bufferGrid;
+    }
 
     //  This table represents all 8 corners of a cube as local offsets
     static readonly Vector3Int[] CornerOffsetTable = new Vector3Int[8]

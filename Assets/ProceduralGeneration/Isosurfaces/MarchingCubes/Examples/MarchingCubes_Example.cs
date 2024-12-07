@@ -11,9 +11,9 @@ public class MarchingCubes_Example : MonoBehaviour
     public bool UseSamplingFunction = false;
 
     [Header("Marching Cubes")]
-    public Vector3Int GridResolution = new Vector3Int(100, 100, 100);
-    public Vector3 GridSize = new Vector3(1.1f, 1.1f, 1.1f);
-    public Vector3 GridPos = new Vector3(0, 0, 0);
+    [Range(1, 100)] public int GridResolution = 100;
+    [Range(0, 100)] public float GridSize = 1;
+    public Vector3 GridOriginOffset = new Vector3(0, 0, 0);
     [Range(0, 1)] public float BinaryThreshold = 0.5f;
     public bool Interpolate = false;
 
@@ -27,11 +27,6 @@ public class MarchingCubes_Example : MonoBehaviour
     MarchingCubes mc = new();
     float[,,] bufferGrid;
 
-    void Start()
-    {
-        BuildBuffer();
-        mc.Setup(GridResolution, bufferGrid);
-    }
     void Update()
     {
         if (Input.GetKey(KeyCode.Space))
@@ -44,23 +39,25 @@ public class MarchingCubes_Example : MonoBehaviour
             sw.Stop();
             Debug.LogFormat("Generation took {0} seconds", sw.Elapsed.TotalSeconds);
         }
-
-        //Run();
     }
 
     void Run()
     {
+        BuildBuffer();
+
         List<Vector3> vertices;
         List<int> indices;
+
+        mc.Setup(GridResolution, bufferGrid);
 
         // Run
         if (Interpolate)
         {
-            (vertices, indices) = mc.MarchCubesInterpolate(GridPos, BinaryThreshold, GridSize);
+            (vertices, indices) = mc.MarchCubesInterpolate(GridOriginOffset, BinaryThreshold, GridSize);
         }
         else
         {
-            (vertices, indices) = mc.MarchCubes(GridPos, BinaryThreshold, GridSize);
+            (vertices, indices) = mc.MarchCubes(GridOriginOffset, BinaryThreshold, GridSize);
         }
 
         // Create Mesh
@@ -117,22 +114,22 @@ public class MarchingCubes_Example : MonoBehaviour
 
     void BuildBuffer()
     {
-        bufferGrid = new float[GridResolution.x + 1, GridResolution.y + 1, GridResolution.z + 1];
+        bufferGrid = new float[GridResolution + 1, GridResolution + 1, GridResolution + 1];
 
         // Set buffer
         if (UseSamplingFunction)
         {
-            for (int x = 0; x <= GridResolution.x; x++)
+            for (int x = 0; x <= GridResolution; x++)
             {
-                for (int y = 0; y <= GridResolution.y; y++)
+                for (int y = 0; y <= GridResolution; y++)
                 {
-                    for (int z = 0; z <= GridResolution.z; z++)
+                    for (int z = 0; z <= GridResolution; z++)
                     {
-                        var t = GridResolution.x + 1;
+                        var t = GridResolution + 1;
                         Vector3 offset = new Vector3(
-                            (x - t / 2f) * GridSize.x / GridResolution.x,
-                            (y - t / 2f) * GridSize.y / GridResolution.y,
-                            (z - t / 2f) * GridSize.z / GridResolution.z);
+                            (x - t / 2f) * GridSize/ GridResolution,
+                            (y - t / 2f) * GridSize / GridResolution,
+                            (z - t / 2f) * GridSize / GridResolution);
                         bufferGrid[x, y, z] = Sphere_Implicit(offset.x, offset.y, offset.z);
                     }
                 }
@@ -140,11 +137,11 @@ public class MarchingCubes_Example : MonoBehaviour
         }
         else
         {
-            for (int x = 0; x <= GridResolution.x; x++)
+            for (int x = 0; x <= GridResolution; x++)
             {
-                for (int y = 0; y <= GridResolution.y; y++)
+                for (int y = 0; y <= GridResolution; y++)
                 {
-                    for (int z = 0; z <= GridResolution.z; z++)
+                    for (int z = 0; z <= GridResolution; z++)
                     {
                         bufferGrid[x, y, z] = PerlinNoise3D(
                          Time.time + ((x + NoiseOffset.x + Mathf.Epsilon) * NoiseResolution),
@@ -176,5 +173,17 @@ public class MarchingCubes_Example : MonoBehaviour
 
             return (r * r - x * x - y * y - z * z);
         }
+    }
+
+    void OnDrawGizmos()
+    {
+         DrawDebugGrid(GridOriginOffset, mc.GetBuffer(), GridSize);
+    }
+
+    void DrawDebugGrid(Vector3 originOffset, float[,,] buffer, float size)
+    {
+        Gizmos.color = Color.red;
+        var size3 = new Vector3(size, size, size);
+        Gizmos.DrawWireCube(transform.position + size3/2, size3);
     }
 }
