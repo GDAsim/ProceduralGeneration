@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -19,9 +18,9 @@ public class MarchingSquares_Example : MonoBehaviour
     public bool UseSamplingFunction = false;
 
     [Header("Marching Squares")]
-    [Range(0, 100)] public int GridResolution = 100;
-    [Range(0, 10)] public float GridSize = 1;
-    public Vector3 GridPos = new Vector3(0, 0, 0);
+    [Range(1, 100)] public int GridResolution = 100;
+    [Range(0, 100)] public float GridSize = 1;
+    public Vector2 GridOriginOffset = new Vector2(0, 0);
     [Range(0, 1)] public float BinaryThreshold = 0.5f;
     public bool Interpolate = false;
 
@@ -41,7 +40,7 @@ public class MarchingSquares_Example : MonoBehaviour
     
     void Update()
     {
-        BuildBuffer();
+        BuildBuffer(GridOriginOffset);
 
         ms.Setup(GridResolution, bufferGrid);
 
@@ -51,11 +50,11 @@ public class MarchingSquares_Example : MonoBehaviour
         // Run
         if (Interpolate)
         {
-            (vertices, indices) = ms.MarchSquaresInterpolate(GridPos, BinaryThreshold, GridSize);
+            (vertices, indices) = ms.MarchSquaresInterpolate(GridOriginOffset, BinaryThreshold, GridSize);
         }
         else
         {
-            (vertices, indices) = ms.MarchSquares(GridPos, BinaryThreshold, GridSize);
+            (vertices, indices) = ms.MarchSquares(GridOriginOffset, BinaryThreshold, GridSize);
         }
 
         // Create Mesh
@@ -70,7 +69,7 @@ public class MarchingSquares_Example : MonoBehaviour
         meshFilter.mesh = mesh;
     }
 
-    void BuildBuffer()
+    void BuildBuffer(Vector2 offset)
     {
         bufferGrid = new float[GridResolution + 1, GridResolution + 1];
 
@@ -81,7 +80,9 @@ public class MarchingSquares_Example : MonoBehaviour
             {
                 for (int y = 0; y <= GridResolution; y++)
                 {
-                    bufferGrid[x, y] = Circle_Implicit(x, y);
+                    var sampleX = x * (GridSize / GridResolution) + offset.x;
+                    var sampleY = y * (GridSize / GridResolution) + offset.y;
+                    bufferGrid[x, y] = Circle_Implicit(sampleX, sampleY);
                 }
             }
         }
@@ -91,35 +92,32 @@ public class MarchingSquares_Example : MonoBehaviour
             {
                 for (int y = 0; y <= GridResolution; y++)
                 {
+                    var sampleX = x * (GridSize / GridResolution) + offset.x;
+                    var sampleY = y * (GridSize / GridResolution) + offset.y;
                     bufferGrid[x, y] = Mathf.PerlinNoise(
-                         Time.time + ((x + NoiseOffset.x + Mathf.Epsilon) * NoiseResolution),
-                         Time.time + ((y + NoiseOffset.y + Mathf.Epsilon) * NoiseResolution));
+                         Time.time + ((sampleX + NoiseOffset.x + offset.x + Mathf.Epsilon) * NoiseResolution),
+                         Time.time + ((sampleY + NoiseOffset.y + offset.y + Mathf.Epsilon) * NoiseResolution));
                 }
             }
         }
 
         float Circle_Implicit(float posX, float posY)
         {
-            posX -= GridResolution / 2;
-            posY -= GridResolution / 2;
-
             float r = 5f;
             float x = posX;
             float y = posY;
-
             return (r * r - x * x - y * y);
         }
     }
 
     void OnDrawGizmos()
     {
-        var pos = transform.position;
-        var pointSize = gridPointSize / 2 * GridSize;
+        var pointSize = gridPointSize / 2 * (GridSize / GridResolution);
 
-        DrawDebugGridDots(pos, pointSize, ms.GetBuffer());
+        DrawDebugGridDots(GridOriginOffset, pointSize, ms.GetBuffer());
     }
 
-    void DrawDebugGridDots(Vector3 pos, float size, float[,] buffer)
+    void DrawDebugGridDots(Vector2 originOffset, float size, float[,] buffer)
     {
         if (buffer == null) return;
 
@@ -127,9 +125,9 @@ public class MarchingSquares_Example : MonoBehaviour
         {
             for (int y = 0; y <= GridResolution; y++)
             {
-                var offset = new Vector3(x, y, 0) * GridSize;
+                Vector3 offset = new Vector2(x, y) * (GridSize / GridResolution) + originOffset;
                 Gizmos.color = new Color(1 - buffer[x, y], 1 - buffer[x, y], 1 - buffer[x, y]);
-                Gizmos.DrawSphere(pos + offset, size);
+                Gizmos.DrawSphere(transform.position + offset, size);
             }
         }
     }

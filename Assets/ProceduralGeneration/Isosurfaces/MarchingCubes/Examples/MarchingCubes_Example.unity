@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 94810530}
   - component: {fileID: 94810529}
   m_Layer: 0
-  m_Name: ImplicitMeshMarchingCubes_Example
+  m_Name: MarchingCubes_Example
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -148,10 +148,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 94810528}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3bcd857381c8ea4e8d642115eb9ae2b, type: 3}
+  m_Script: {fileID: 11500000, guid: 9dce39e1c925fab44a84d7740c4ee8a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 7f6ec1de606e6c54594ce6b702347cf2, type: 2}
+  UseSamplingFunction: 1
+  GridResolution: {x: 100, y: 100, z: 100}
+  GridSize: {x: 1.1, y: 1.1, z: 1.1}
+  GridPos: {x: 0, y: 0, z: 0}
+  BinaryThreshold: 0
+  Interpolate: 0
+  NoiseResolution: 0.1
+  NoiseOffset: {x: 0, y: 0, z: 0}
+  meshMaterial: {fileID: 2100000, guid: 62d975aa612020040a43be949ea39665, type: 2}
 --- !u!4 &94810530
 Transform:
   m_ObjectHideFlags: 0

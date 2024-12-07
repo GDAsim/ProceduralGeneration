@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 public class MarchingSquares
@@ -15,7 +16,7 @@ public class MarchingSquares
         this.gridResolution = gridResolution;
         bufferGrid = inBuffer;
     }
-    public List<(Vector3 p1,Vector3 p2)> MarchSquares_Lines(Vector3 vertexOffset, float binaryThreshold, float scale)
+    public List<(Vector3 p1,Vector3 p2)> MarchSquares_Lines(Vector3 originOffset, float binaryThreshold, float size)
     {
         var lines = new List<(Vector3 p1, Vector3 p2)>();
 
@@ -85,8 +86,8 @@ public class MarchingSquares
                 foreach (var localline in localLines)
                 {
                     var line = localline;
-                    line.p1 = (line.p1 + pos) * scale;
-                    line.p2 = (line.p2 + pos) * scale;
+                    line.p1 = (line.p1 + pos) * (size / gridResolution) + originOffset;
+                    line.p2 = (line.p2 + pos) * (size / gridResolution) + originOffset;
                     lines.Add(line);
                 }
             }
@@ -94,7 +95,7 @@ public class MarchingSquares
 
         return lines;
     }
-    public List<(Vector3 p1,Vector3 p2)> MarchSquaresInterpolate_Lines(Vector3 vertexOffset, float binaryThreshold, float scale)
+    public List<(Vector3 p1,Vector3 p2)> MarchSquaresInterpolate_Lines(Vector3 originOffset, float binaryThreshold, float size)
     {
         var lines = new List<(Vector3 p1, Vector3 p2)>();
 
@@ -175,8 +176,8 @@ public class MarchingSquares
                 foreach (var localline in localLines)
                 {
                     var line = localline;
-                    line.p1 = (line.p1 + pos) * scale;
-                    line.p2 = (line.p2 + pos) * scale;
+                    line.p1 = (line.p1 + pos) * (size / gridResolution) + originOffset;
+                    line.p2 = (line.p2 + pos) * (size / gridResolution) + originOffset;
                     lines.Add(line);
                 }
             }
@@ -184,7 +185,7 @@ public class MarchingSquares
 
         return lines;
     }
-    public (List<Vector3> verts,List<int> indices) MarchSquares(Vector3 vertexOffset,float binaryThreshold, float scale)
+    public (List<Vector3> verts,List<int> indices) MarchSquares(Vector3 originOffset,float binaryThreshold, float size)
     {
         var vertices = new List<Vector3>();
         var indices = new List<int>();
@@ -208,7 +209,7 @@ public class MarchingSquares
 
                 switch (bitflag)
                 {
-                    case 0 or 15:
+                    case 0:
                         break;
                     case 1:
                         verts = new Vector3[]
@@ -462,9 +463,8 @@ public class MarchingSquares
 
                 foreach (Vector3 v in verts)
                 {
-                    Vector3 newVert = (v + pos) * scale;
-
-                    vertices.Add(newVert + vertexOffset);
+                    Vector3 newVert = (v + pos) * (size / gridResolution) + originOffset;
+                    vertices.Add(newVert);
                 }
 
                 foreach (int tri in triangle)
@@ -476,7 +476,7 @@ public class MarchingSquares
 
         return (vertices, indices);
     }
-    public (List<Vector3> verts, List<int> indices) MarchSquaresInterpolate(Vector3 vertexOffset, float binaryThreshold, float scale)
+    public (List<Vector3> verts, List<int> indices) MarchSquaresInterpolate(Vector3 originOffset, float binaryThreshold, float size)
     {
         var vertices = new List<Vector3>();
         var indices = new List<int>();
@@ -760,9 +760,8 @@ public class MarchingSquares
 
                 foreach (Vector3 v in verts)
                 {
-                    Vector3 newVert = (v + pos) * scale;
-
-                    vertices.Add(newVert + vertexOffset);
+                    Vector3 newVert = (v + pos) * (size / gridResolution) + originOffset;
+                    vertices.Add(newVert);
                 }
 
                 foreach (int tri in triangle)
