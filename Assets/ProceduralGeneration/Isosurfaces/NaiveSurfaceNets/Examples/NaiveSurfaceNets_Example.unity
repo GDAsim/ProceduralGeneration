@@ -131,27 +131,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 94810530}
-  - component: {fileID: 94810529}
+  - component: {fileID: 94810531}
   m_Layer: 0
-  m_Name: ImplicitMeshMarchingCubes_Example
+  m_Name: NaiveSurfaceNets_Example
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &94810529
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 94810528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3bcd857381c8ea4e8d642115eb9ae2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 7f6ec1de606e6c54594ce6b702347cf2, type: 2}
 --- !u!4 &94810530
 Transform:
   m_ObjectHideFlags: 0
@@ -167,6 +154,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &94810531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 94810528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3e173053d359d24d9494846d457f1e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseSamplingFunction: 0
+  GridResolution: 20
+  GridSize: 1
+  GridOriginOffset: {x: 0, y: 0, z: 0}
+  Interpolate: 0
+  NoiseResolution: 0.1
+  NoiseOffset: {x: 0, y: 0, z: 0}
+  meshMaterial: {fileID: 2100000, guid: e8d23da2bb20d994e95ab32001932424, type: 2}
 --- !u!1 &1771845328
 GameObject:
   m_ObjectHideFlags: 0

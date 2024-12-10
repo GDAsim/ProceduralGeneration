@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 // Source: https://github.com/ttammear/unitymcubes/tree/master/Assets
 // Edited to use double precision instead of float and uses size and resolution, and have the origin to be in the center
@@ -55,7 +56,7 @@ public class MarchingCubes
                     if (bitflag == 0 || bitflag == 256) continue;
 
                     #region Generate triangles
-                    var pos = new Vector3(x, y, z);
+                    var pos = new Vector3Int(x, y, z);
 
                     int currentIndex = 0;
 
@@ -65,16 +66,13 @@ public class MarchingCubes
                         int edgeIndex = Triangles[bitflag, 3 * triangle];
                         if (edgeIndex < 0) break;
 
-
                         // Loop though a triangle
                         for (int triCorner = 0; triCorner < 3; triCorner++)
                         {
                             edgeIndex = Triangles[bitflag, 3 * triangle + triCorner];
 
-                            Vector3 edge1I = EdgeOffsetTable[edgeIndex, 0];
-                            Vector3 edge2I = EdgeOffsetTable[edgeIndex, 1];
-                            Vector3 edgeP1 = edge1I;
-                            Vector3 edgeP2 = edge2I;
+                            Vector3 edgeP1 = EdgeOffsetTable[edgeIndex, 0];
+                            Vector3 edgeP2 = EdgeOffsetTable[edgeIndex, 1];
 
                             var midPoint = (edgeP1 + edgeP2) * 0.5f;
 
@@ -91,7 +89,7 @@ public class MarchingCubes
 
         return (vertices, indices);
     }
-    public (List<Vector3>, List<int>) MarchCubesInterpolate(Vector3 vertexOffset, float binaryThreshold, float size)
+    public (List<Vector3>, List<int>) MarchCubesInterpolate(Vector3 originOffset, float binaryThreshold, float size)
     {
         var vertices = new List<Vector3>();
         var indices = new List<int>();
@@ -118,9 +116,9 @@ public class MarchingCubes
                     // Early out for 0 or 256
                     if (bitflag == 0 || bitflag == 256) continue;
 
+                    var pos = new Vector3Int(x, y, z);
 
-
-                    int _currentIndex = 0;
+                    int currentIndex = 0;
 
                     // Max of 5 different triangles to be made based on possible config
                     for (int triangle = 0; triangle < 5; triangle++)
@@ -128,49 +126,31 @@ public class MarchingCubes
                         int edgeIndex = Triangles[bitflag, 3 * triangle];
                         if (edgeIndex < 0) break;
 
-
                         // Loop though a triangle
                         for (int triCorner = 0; triCorner < 3; triCorner++)
                         {
                             edgeIndex = Triangles[bitflag, 3 * triangle + triCorner];
 
-                            Vector3 edge1I = EdgeOffsetTable[edgeIndex, 0];
-                            Vector3 edge2I = EdgeOffsetTable[edgeIndex, 1];
-                            Vector3 edge1 = edge1I;
-                            Vector3 edge2 = edge2I;
-
-                            Vector3 middlePoint = Vector3.zero;
+                            Vector3 edgeP1 = EdgeOffsetTable[edgeIndex, 0];
+                            Vector3 edgeP2 = EdgeOffsetTable[edgeIndex, 1];
 
                             //interpolate
-                            float ofst;
-                            float s1 = bufferGrid[x + (int)edge1I.x, y + (int)edge1I.y, z + (int)edge1I.z];
-                            float delta = s1 - bufferGrid[x + (int)edge2I.x, y + (int)edge2I.y, z + (int)edge2I.z];
-                            if (delta == 0.0f)
-                                ofst = 1000f;
-                            else
-                                ofst = s1 / delta;
-                            middlePoint = edge1 + ofst * (edge2 - edge1); // lerp
-                            
+                            var p1value = bufferGrid[
+                                x + (int)edgeP1.x,
+                                y + (int)edgeP1.y,
+                                z + (int)edgeP1.z];
+                            var p2value = bufferGrid[
+                                x + (int)edgeP2.x,
+                                y + (int)edgeP2.y,
+                                z + (int)edgeP2.z];
+                            float delta = p1value - p2value;
+                            float weight = p1value / delta;
+                            Vector3 midPoint = edgeP1 + weight * (edgeP2 - edgeP1); // Lerp formula
 
-                            // voxel world offset
-                            Vector3 offset = new Vector3(
-                                (x - gridResolution / 2f),
-                                (y - gridResolution / 2f),
-                                (z - gridResolution / 2f));
+                            Vector3 newVert = (midPoint + pos) * (size / gridResolution) + originOffset;
 
-                            Vector3 v = offset + middlePoint;
-                            v = new Vector3(
-                                v.x * size / gridResolution,
-                                v.y * size / gridResolution,
-                                v.z * size / gridResolution);
-
-                            Vector3 mid = new Vector3(
-                            vertexOffset.x - (size / gridResolution) / 2f,
-                            vertexOffset.y - (size / gridResolution) / 2f,
-                            vertexOffset.z - (size / gridResolution) / 2f);
-
-                            vertices.Add(mid + v);
-                            indices.Add(_currentIndex++);
+                            vertices.Add(newVert);
+                            indices.Add(currentIndex++);
                         }
                     }
                 }

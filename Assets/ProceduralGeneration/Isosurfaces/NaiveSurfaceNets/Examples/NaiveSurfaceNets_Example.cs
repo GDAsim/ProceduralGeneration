@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Generate Mesh from Implicit Function using The Marching Cubes Algorithm
+/// Generate Mesh from Implicit Function using The SurfaceNets
 /// </summary>
-public class MarchingCubes_Example : MonoBehaviour
+public class NaiveSurfaceNets_Example : MonoBehaviour
 {
     [Header("Data")]
     public bool UseSamplingFunction = false;
@@ -14,7 +14,6 @@ public class MarchingCubes_Example : MonoBehaviour
     [Range(1, 100)] public int GridResolution = 100;
     [Range(0, 100)] public float GridSize = 1;
     public Vector3 GridOriginOffset = new Vector3(0, 0, 0);
-    [Range(0, 1)] public float BinaryThreshold = 0.5f;
     public bool Interpolate = false;
 
     [Header("Noise")]
@@ -24,7 +23,7 @@ public class MarchingCubes_Example : MonoBehaviour
     [Header("Mesh")]
     [SerializeField] Material meshMaterial;
 
-    MarchingCubes mc = new();
+    SurfaceNets sn = new();
     float[,,] bufferGrid;
 
     void Update()
@@ -49,68 +48,42 @@ public class MarchingCubes_Example : MonoBehaviour
         List<Vector3> vertices;
         List<int> indices;
 
-        mc.Setup(GridResolution, bufferGrid);
+        sn.Setup(GridResolution, bufferGrid);
 
         // Run
         if (Interpolate)
         {
-            (vertices, indices) = mc.MarchCubesInterpolate(GridOriginOffset, BinaryThreshold, GridSize);
+            (vertices, indices) = sn.GenerateInterpolate(GridOriginOffset, GridSize);
         }
         else
         {
-            (vertices, indices) = mc.MarchCubes(GridOriginOffset, BinaryThreshold, GridSize);
+            (vertices, indices) = sn.Generate(GridOriginOffset, GridSize);
         }
 
         // Create Mesh
         if (vertices.Count == 0) return;
         if (indices.Count == 0) return;
-
+         
         foreach (Transform child in gameObject.transform)
         {
             Destroy(child.gameObject);
         }
+         
+        Mesh mesh = new();
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        mesh.SetVertices(vertices);
+        mesh.SetIndices(indices,MeshTopology.Quads,0,false);
+        mesh.RecalculateBounds();
+        mesh.RecalculateNormals();
 
-        CreateMesh(vertices.ToArray());
-    }
+        GameObject go = new($"Implicit Mesh");
+        go.transform.parent = transform;
+        go.AddComponent<MeshFilter>();
+        go.AddComponent<MeshRenderer>();
+        go.GetComponent<Renderer>().material = meshMaterial;
+        go.GetComponent<MeshFilter>().mesh = mesh;
 
-    void CreateMesh(Vector3[] verts, int vertsPerMesh = UInt16.MaxValue)
-    {
-        // Must be divisible by 3
-        vertsPerMesh = 30000;
-
-        int numMeshes = (verts.Length / vertsPerMesh) + 1;
-
-        for (int i = 0; i < numMeshes; i++)
-        {
-            var splitVerts = new List<Vector3>();
-            var splitIndices = new List<int>();
-
-            for (int j = 0; j < vertsPerMesh; j++)
-            {
-                int idx = i * vertsPerMesh + j;
-
-                if (idx < verts.Length)
-                {
-                    splitVerts.Add(verts[idx]);
-                    splitIndices.Add(j);
-                }
-            }
-
-            if (splitVerts.Count == 0) continue;
-
-            Mesh mesh = new();
-            mesh.SetVertices(splitVerts);
-            mesh.SetTriangles(splitIndices, 0);
-            mesh.RecalculateBounds();
-            mesh.RecalculateNormals();
-
-            GameObject go = new($"Implicit Mesh {i}");
-            go.transform.parent = transform;
-            go.AddComponent<MeshFilter>();
-            go.AddComponent<MeshRenderer>();
-            go.GetComponent<Renderer>().material = meshMaterial;
-            go.GetComponent<MeshFilter>().mesh = mesh;
-        }
+        //CreateMesh(vertices.ToArray());
     }
 
     void BuildBuffer()
@@ -128,7 +101,7 @@ public class MarchingCubes_Example : MonoBehaviour
                     {
                         var t = GridResolution + 1;
                         Vector3 offset = new Vector3(
-                            (x - t / 2f) * GridSize/ GridResolution,
+                            (x - t / 2f) * GridSize / GridResolution,
                             (y - t / 2f) * GridSize / GridResolution,
                             (z - t / 2f) * GridSize / GridResolution);
                         bufferGrid[x, y, z] = Sphere_Implicit(offset.x, offset.y, offset.z);
@@ -165,7 +138,7 @@ public class MarchingCubes_Example : MonoBehaviour
             return (xy + xz + yz + yx + zx + zy) / 6 * 2 - 1;
         }
 
-        float Sphere_Implicit(float posX, float posY,float posZ)
+        float Sphere_Implicit(float posX, float posY, float posZ)
         {
             float r = 0.5f;
             float x = posX;
@@ -178,7 +151,7 @@ public class MarchingCubes_Example : MonoBehaviour
 
     void OnDrawGizmos()
     {
-         DrawDebugGrid(GridOriginOffset, GridSize);
+        DrawDebugGrid(GridOriginOffset, GridSize);
     }
 
     void DrawDebugGrid(Vector3 originOffset, float size)

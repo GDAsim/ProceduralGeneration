@@ -152,11 +152,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseSamplingFunction: 1
-  GridResolution: 100
+  GridResolution: 20
   GridSize: 1
   GridOriginOffset: {x: 0, y: 0, z: 0}
   BinaryThreshold: 0
-  Interpolate: 0
+  Interpolate: 1
   NoiseResolution: 0.1
   NoiseOffset: {x: 0, y: 0, z: 0}
   meshMaterial: {fileID: 2100000, guid: 62d975aa612020040a43be949ea39665, type: 2}
