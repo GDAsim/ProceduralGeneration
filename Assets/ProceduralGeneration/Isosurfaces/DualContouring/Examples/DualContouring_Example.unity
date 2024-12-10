@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 94810530}
   - component: {fileID: 94810531}
   m_Layer: 0
-  m_Name: NaiveSurfaceNets_Example
+  m_Name: DualContouring_Example
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -163,17 +163,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 94810528}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3e173053d359d24d9494846d457f1e9, type: 3}
+  m_Script: {fileID: 11500000, guid: f5a64ef9181078b44ba177ea5e6d0eb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   UseSamplingFunction: 1
-  GridResolution: 80
-  GridSize: 4
+  GridResolution: 20
+  GridSize: 1.1
   GridOriginOffset: {x: 0, y: 0, z: 0}
-  Interpolate: 1
   NoiseResolution: 0.1
   NoiseOffset: {x: 0, y: 0, z: 0}
-  meshMaterial: {fileID: 2100000, guid: e8d23da2bb20d994e95ab32001932424, type: 2}
+  meshMaterial: {fileID: 2100000, guid: 22be6fc84045b534dbeb4a8341bc0f38, type: 2}
 --- !u!1 &1771845328
 GameObject:
   m_ObjectHideFlags: 0

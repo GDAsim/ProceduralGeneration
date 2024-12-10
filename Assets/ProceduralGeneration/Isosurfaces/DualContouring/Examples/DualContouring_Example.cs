@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Generate Mesh from Implicit Function using The SurfaceNets
 /// </summary>
-public class NaiveSurfaceNets_Example : MonoBehaviour
+public class DualContouring_Example : MonoBehaviour
 {
     [Header("Data")]
     public bool UseSamplingFunction = false;
@@ -14,7 +14,6 @@ public class NaiveSurfaceNets_Example : MonoBehaviour
     [Range(1, 100)] public int GridResolution = 100;
     [Range(0, 100)] public float GridSize = 1;
     public Vector3 GridOriginOffset = new Vector3(0, 0, 0);
-    public bool Interpolate = false;
 
     [Header("Noise")]
     [Range(0.01f, 1f)] public float NoiseResolution = 0.1f;
@@ -50,14 +49,7 @@ public class NaiveSurfaceNets_Example : MonoBehaviour
         sn.Setup(GridResolution, bufferGrid);
 
         // Run
-        if (Interpolate)
-        {
-            (vertices, indices) = sn.GenerateInterpolate(GridOriginOffset, GridSize);
-        }
-        else
-        {
-            (vertices, indices) = sn.Generate(GridOriginOffset, GridSize);
-        }
+        (vertices, indices) = sn.GenerateInterpolate(GridOriginOffset, GridSize);
 
         // Create Mesh
         if (vertices.Count == 0) return;
@@ -103,7 +95,7 @@ public class NaiveSurfaceNets_Example : MonoBehaviour
                             (x - t / 2f) * GridSize / GridResolution,
                             (y - t / 2f) * GridSize / GridResolution,
                             (z - t / 2f) * GridSize / GridResolution);
-                        bufferGrid[x, y, z] = DensityFunc.Sphere_Implicit(offset.x, offset.y, offset.z);
+                        bufferGrid[x, y, z] = DensityFunc.Box_Implicit(offset.x, offset.y, offset.z);
                     }
                 }
             }
