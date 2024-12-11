@@ -8,6 +8,11 @@ public class HermiteData
     public List<Vector3> gradientVectors = new List<Vector3>();
 }
 
+/// <summary>
+/// Bad implementation?
+/// Similar to surface nets but required Hermite Data (sampling function and normals at exact points)
+/// solves the problem for non-manifolds 
+/// </summary>
 public class DualContouring
 {
     const int MaxParticleIterations = 50;
