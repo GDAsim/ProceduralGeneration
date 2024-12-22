@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ParametricMesh
+/// <summary>
+/// Creates a mesh using parametric Function as input, using naive;y perfrom 3 loop to define vertices and create triangles
+/// Added custom parameters to create curves/surfaces or solids , Meshes*
+/// </summary>
+public class NaiveParametric
 {
     public delegate void SamplingFunction(double u, double v, double w, out double x, out double y, out double z);
     public SamplingFunction parametricFunction;

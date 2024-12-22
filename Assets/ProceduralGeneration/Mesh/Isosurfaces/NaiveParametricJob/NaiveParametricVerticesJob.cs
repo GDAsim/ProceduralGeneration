@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
-struct ParametricMeshVerticesJob : IJobFor
+struct NaiveParametricVerticesJob : IJobFor
 {
     //Read
     [ReadOnly] public float uMinDomain; [ReadOnly] public float uMaxDomain;

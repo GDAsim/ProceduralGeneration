@@ -1,7 +1,10 @@
 using Unity.Collections;
 using Unity.Jobs;
 
-struct ParametricMeshIndicesJob : IJobFor
+/// <summary>
+/// Attempted Convertsion of Naive Parametric
+/// </summary>
+struct NaiveParametricIndicesJob : IJobFor
 {
     //Read
     [ReadOnly] public bool isusingU;

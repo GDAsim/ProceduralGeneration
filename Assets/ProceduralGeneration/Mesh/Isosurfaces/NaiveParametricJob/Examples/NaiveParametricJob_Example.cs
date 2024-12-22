@@ -54,31 +54,39 @@ public class ParametricMeshJob_Example : MonoBehaviour
         {
             mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         }
+
+        StartMeshJob(usingU, usingV, usingW,
+           uMinDomain, uMaxDomain,
+           vMinDomain, vMaxDomain,
+           wMinDomain, wMaxDomain,
+           sampleresolution_U, sampleresolution_V, sampleresolution_W);
+
+        EndGOLJob(mesh);
     }
 
     void Update()
     {
-        if(Input.GetKey(KeyCode.Space))
-        {
-            var mesh = GetComponent<MeshFilter>().mesh;
+        //if(Input.GetKey(KeyCode.Space))
+        //{
+        //    var mesh = GetComponent<MeshFilter>().mesh;
 
-            StartMeshJob(usingU, usingV, usingW,
-               uMinDomain, uMaxDomain,
-               vMinDomain, vMaxDomain,
-               wMinDomain, wMaxDomain,
-               sampleresolution_U, sampleresolution_V, sampleresolution_W);
+        //    StartMeshJob(usingU, usingV, usingW,
+        //       uMinDomain, uMaxDomain,
+        //       vMinDomain, vMaxDomain,
+        //       wMinDomain, wMaxDomain,
+        //       sampleresolution_U, sampleresolution_V, sampleresolution_W);
 
-            EndGOLJob(mesh);
-        }
+        //    EndGOLJob(mesh);
+        //}
     }
 
 
     #region ParametricMeshJob Job
-    ParametricMeshVerticesJob parametricMeshVerticesJob;
+    NaiveParametricVerticesJob parametricMeshVerticesJob;
     JobHandle sheduleParralelJobHandle;
     NativeArray<Vector3> outputVertices;
 
-    ParametricMeshIndicesJob parametricMeshIndicesJob;
+    NaiveParametricIndicesJob parametricMeshIndicesJob;
     JobHandle sheduleParralelJobHandle2;
     NativeList<int> outputIndices;
 
@@ -96,7 +104,7 @@ public class ParametricMeshJob_Example : MonoBehaviour
         int sampleresolution_U, int sampleresolution_V, int sampleresolution_W,
         bool isRightCoordinateSystem = false)
     {
-        parametricMeshVerticesJob = new ParametricMeshVerticesJob();
+        parametricMeshVerticesJob = new NaiveParametricVerticesJob();
         parametricMeshVerticesJob.uMinDomain = uMinDomain;
         parametricMeshVerticesJob.uMaxDomain = uMaxDomain;
         parametricMeshVerticesJob.vMinDomain = vMinDomain;
@@ -121,7 +129,7 @@ public class ParametricMeshJob_Example : MonoBehaviour
         parametricMeshVerticesJob.sampleresolution_V = sampleresolution_V;
         parametricMeshVerticesJob.sampleresolution_W = sampleresolution_W;
         parametricMeshVerticesJob.isRightCoordinateSystem = isRightCoordinateSystem;
-        parametricMeshVerticesJob.parametricFunction = new FunctionPointer<ParametricMeshVerticesJob.SamplingFunction>(Marshal.GetFunctionPointerForDelegate((ParametricMeshVerticesJob.SamplingFunction)parametricFunction));
+        parametricMeshVerticesJob.parametricFunction = new FunctionPointer<NaiveParametricVerticesJob.SamplingFunction>(Marshal.GetFunctionPointerForDelegate((NaiveParametricVerticesJob.SamplingFunction)parametricFunction));
 
 
         outputVertices = new NativeArray<Vector3>(sampleresolution_U * sampleresolution_V * sampleresolution_W, Allocator.TempJob);
@@ -130,7 +138,7 @@ public class ParametricMeshJob_Example : MonoBehaviour
         sheduleParralelJobHandle = parametricMeshVerticesJob.ScheduleParallel(outputVertices.Length, 64, new JobHandle());
 
 
-        parametricMeshIndicesJob = new ParametricMeshIndicesJob();
+        parametricMeshIndicesJob = new NaiveParametricIndicesJob();
         parametricMeshIndicesJob.isusingU = isusingU;
         parametricMeshIndicesJob.isusingV = isusingV;
         parametricMeshIndicesJob.isusingW = isusingW;
