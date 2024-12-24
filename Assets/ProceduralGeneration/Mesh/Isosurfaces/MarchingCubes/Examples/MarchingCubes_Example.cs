@@ -24,7 +24,7 @@ public class MarchingCubes_Example : MonoBehaviour
     [Header("Mesh")]
     [SerializeField] Material meshMaterial;
 
-    MarchingCubes mc = new();
+    MarchingCubes2 mc = new();
     float[,,] bufferGrid;
 
     void Update()

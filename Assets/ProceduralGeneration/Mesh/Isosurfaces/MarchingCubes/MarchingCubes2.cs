@@ -13,7 +13,7 @@ using static UnityEditor.PlayerSettings;
 // triplanar mapping for uvs?
 // analytical normals would probably be optimal (Mesh.RecalculateNormals() is slow and inaccurate)
 
-public class MarchingCubes
+public class MarchingCubes2
 {
     /// <summary>
     /// Data Grid / Voxel Grid / Sampling Buffer
