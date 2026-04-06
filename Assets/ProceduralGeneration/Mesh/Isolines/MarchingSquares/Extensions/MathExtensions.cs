@@ -1,9 +1,7 @@
-using UnityEngine;
-
 public static class MathExtensions
 {
-    public static float remap(this float value, float start1, float stop1, float start2, float stop2)
+    public static float remap(this float value, float fromMin, float fromMax, float toMin, float toMax)
     {
-        return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+        return toMin + (toMax - toMin) * ((value - fromMin) / (fromMax - fromMin));
     }
 }
