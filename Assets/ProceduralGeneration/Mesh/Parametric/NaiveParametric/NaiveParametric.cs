@@ -20,12 +20,12 @@ public class NaiveParametric
         bool isRightCoordinateSystem = false)
     {
         // Some checks before creating mesh
-        int numOfDimentions = 0;
-        if (isusingU) numOfDimentions++;
+        int numOfDimensions = 0;
+        if (isusingU) numOfDimensions++;
         else sampleresolution_U = 0;
-        if (isusingV) numOfDimentions++;
+        if (isusingV) numOfDimensions++;
         else sampleresolution_V = 0;
-        if (isusingW) numOfDimentions++;
+        if (isusingW) numOfDimensions++;
         else sampleresolution_W = 0;
 
         Mesh mesh = inmesh;
@@ -65,7 +65,7 @@ public class NaiveParametric
 
                     #region 3 Variables Used: Algo to create a 8 vert box
                     //Drawing Clockwise
-                    if (numOfDimentions == 3)
+                    if (numOfDimensions == 3)
                     {
                         if (k == 0 && i >= 1 && j >= 1)//front
                         {
@@ -119,7 +119,7 @@ public class NaiveParametric
                     //In order to allow for any parmetric u v w to be used in any order,
                     //we need to know which is used/not used for generating curves
                     //so that we can grab the correct loop index to do the triangle indexing
-                    else if (numOfDimentions == 2)
+                    else if (numOfDimensions == 2)
                     {
                         //i=u,j=v;k=w;
                         int loopindex1 = i;
@@ -155,7 +155,7 @@ public class NaiveParametric
                     #endregion
 
                     #region 1 Variables Used
-                    else if (numOfDimentions == 1)
+                    else if (numOfDimensions == 1)
                     {
                         indices.Add(vertices.Count - 1);
                     }
@@ -164,12 +164,12 @@ public class NaiveParametric
             }
         }
         mesh.SetVertices(vertices);
-        if (numOfDimentions == 1)
+        if (numOfDimensions == 1)
         {
             mesh.SetIndices(indices.ToArray(), MeshTopology.LineStrip, 0);
 
         }
-        else if (numOfDimentions == 2 || numOfDimentions == 3)
+        else if (numOfDimensions == 2 || numOfDimensions == 3)
         {
             mesh.SetIndices(indices.ToArray(), MeshTopology.Quads, 0);
             mesh.RecalculateNormals();

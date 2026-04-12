@@ -45,7 +45,7 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         var mesh = GetComponent<MeshFilter>().mesh;
 
         NaiveParametric parametricMesh = new();
-        parametricMesh.parametricFunction = parameticCubeFunc;
+        parametricMesh.parametricFunction = ParametricFunc.Cube;
         parametricMesh.CreateParametricMesh(mesh,
                                 usingU, usingV, usingW,
                                 uMinDomain, uMaxDomain,
@@ -71,16 +71,5 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         //}
     }
 
-    void parameticCubeFunc(double u, double v, double w, out double x, out double y, out double z)
-    {
-        x = u;
-        y = v;
-        z = w;
-    }
-    void parametricSphereFunc(double u, double v, double w, out double x, out double y, out double z)
-    {
-        x = Math.Cos(u) * Math.Cos(v);
-        y = Math.Sin(u) * Math.Cos(v);
-        z = Math.Sin(v);
-    }
+    
 }
