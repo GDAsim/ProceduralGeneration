@@ -9,7 +9,7 @@ public static partial class ParametricFunc
     {
         x = u;
         y = v;
-        z = 0;
+        z = w;
     }
     public static void Sphere(double u, double v, double w, out double x, out double y, out double z)
     {

@@ -7,59 +7,58 @@ using UnityEngine;
 /// </summary>
 public class NaiveParametric
 {
-    public delegate void SamplingFunction(double u, double v, double w, out double x, out double y, out double z);
-    public SamplingFunction parametricFunction;
+    SamplingFunction samplingFunction;
+    bool usingU;
+    bool usingV;
+    bool usingW;
 
-    public Mesh CreateParametricMesh
-        (Mesh inmesh,
-        bool isusingU, bool isusingV, bool isusingW,
-        float uMinDomain, float uMaxDomain,
-        float vMinDomain, float vMaxDomain,
-        float wMinDomain, float wMaxDomain,
-        int sampleresolution_U, int sampleresolution_V, int sampleresolution_W,
-        bool isRightCoordinateSystem = false)
+    public delegate void SamplingFunction(double u, double v, double w, out double x, out double y, out double z);
+
+    public void SetParametricFunction(SamplingFunction samplingFunction,
+        bool usingU, bool usingV, bool usingW)
+    {
+        this.samplingFunction = samplingFunction;
+        this.usingU = usingU;
+        this.usingV = usingV;
+        this.usingW = usingW;
+    }
+    public Mesh ModifyMesh(Mesh inmesh,
+        Vector2 uDomainRange, Vector2 vDomainRange, Vector2 wDomainRange,
+        int samplingResolution_U, int samplingResolution_V, int samplingResolution_W)
     {
         // Some checks before creating mesh
-        int numOfDimensions = 0;
-        if (isusingU) numOfDimensions++;
-        else sampleresolution_U = 0;
-        if (isusingV) numOfDimensions++;
-        else sampleresolution_V = 0;
-        if (isusingW) numOfDimensions++;
-        else sampleresolution_W = 0;
+        var numOfDimensions = 0;
+        if (usingU) numOfDimensions++;
+        else samplingResolution_U = 0;
+        if (usingV) numOfDimensions++;
+        else samplingResolution_V = 0;
+        if (usingW) numOfDimensions++;
+        else samplingResolution_W = 0;
 
-        Mesh mesh = inmesh;
-        if (SystemInfo.supports32bitsIndexBuffer)
-        {
-            mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        }
-        else
-        {
-            // Already using default Uint16
-        }
         List<Vector3> vertices = new List<Vector3>();
         List<int> indices = new List<int>();
 
-        sampleresolution_U += 1;
-        sampleresolution_V += 1;
-        sampleresolution_W += 1;
+        samplingResolution_U += 1;
+        samplingResolution_V += 1;
+        samplingResolution_W += 1;
 
-        for (int k = 0; k < sampleresolution_W; k++)
+        var uMin = uDomainRange.x;
+        var uMax = uDomainRange.y;
+        var vMin = vDomainRange.x;
+        var vMax = vDomainRange.y;
+        var wMin = wDomainRange.x;
+        var wMax = wDomainRange.y;
+        for (int k = 0; k < samplingResolution_W; k++)
         {
-            float w = uMinDomain + k * ((wMaxDomain - wMinDomain) / (sampleresolution_W - 1));
-            for (int j = 0; j < sampleresolution_V; j++)
+            float w = uMin + k * ((wMax - wMin) / (samplingResolution_W - 1));
+            for (int j = 0; j < samplingResolution_V; j++)
             {
-                float v = uMinDomain + j * ((vMaxDomain - vMinDomain) / (sampleresolution_V - 1));
-                for (int i = 0; i < sampleresolution_U; i++)
+                float v = uMin + j * ((vMax - vMin) / (samplingResolution_V - 1));
+                for (int i = 0; i < samplingResolution_U; i++)
                 {
-                    float u = uMinDomain + i * ((uMaxDomain - uMinDomain) / (sampleresolution_U - 1));
+                    float u = uMin + i * ((uMax - uMin) / (samplingResolution_U - 1));
 
-                    parametricFunction(u, v, w, out double x, out double y, out double z);
-
-                    if(isRightCoordinateSystem)
-                    {
-                        z *= -1;
-                    }
+                    samplingFunction(u, v, w, out double x, out double y, out double z);
 
                     vertices.Add(new Vector3((float)x, (float)y, (float)z));
 
@@ -71,44 +70,44 @@ public class NaiveParametric
                         {
                             //topright botright botleft topleft
                             indices.Add(vertices.Count - 1);
-                            indices.Add(vertices.Count - 1 - sampleresolution_U);
-                            indices.Add(vertices.Count - 1 - 1 - sampleresolution_U);
+                            indices.Add(vertices.Count - 1 - samplingResolution_U);
+                            indices.Add(vertices.Count - 1 - 1 - samplingResolution_U);
                             indices.Add(vertices.Count - 1 - 1);
                         }
-                        if (k == sampleresolution_W - 1 && i >= 1 && j >= 1)//back
+                        if (k == samplingResolution_W - 1 && i >= 1 && j >= 1)//back
                         {
                             //topright botright botleft topleft
                             indices.Add(vertices.Count - 1 - 1);
-                            indices.Add(vertices.Count - 1 - 1 - sampleresolution_U);
-                            indices.Add(vertices.Count - 1 - sampleresolution_U);
+                            indices.Add(vertices.Count - 1 - 1 - samplingResolution_U);
+                            indices.Add(vertices.Count - 1 - samplingResolution_U);
                             indices.Add(vertices.Count - 1);
                         }
                         if (k >= 1 && i == 0 && j >= 1) //left
                         {
                             //topleft topright botright botleft
                             indices.Add(vertices.Count - 1);
-                            indices.Add(vertices.Count - 1 - sampleresolution_U * sampleresolution_V);
-                            indices.Add(vertices.Count - 1 - sampleresolution_U - sampleresolution_U * sampleresolution_V);
-                            indices.Add(vertices.Count - 1 - sampleresolution_U);
+                            indices.Add(vertices.Count - 1 - samplingResolution_U * samplingResolution_V);
+                            indices.Add(vertices.Count - 1 - samplingResolution_U - samplingResolution_U * samplingResolution_V);
+                            indices.Add(vertices.Count - 1 - samplingResolution_U);
                         }
-                        if (k >= 1 && i == sampleresolution_U - 1 && j >= 1) //right
+                        if (k >= 1 && i == samplingResolution_U - 1 && j >= 1) //right
                         {
-                            indices.Add(vertices.Count - 1 - sampleresolution_U);
-                            indices.Add(vertices.Count - 1 - sampleresolution_U - sampleresolution_U * sampleresolution_V);
-                            indices.Add(vertices.Count - 1 - sampleresolution_U * sampleresolution_V);
+                            indices.Add(vertices.Count - 1 - samplingResolution_U);
+                            indices.Add(vertices.Count - 1 - samplingResolution_U - samplingResolution_U * samplingResolution_V);
+                            indices.Add(vertices.Count - 1 - samplingResolution_U * samplingResolution_V);
                             indices.Add(vertices.Count - 1);
                         }
                         if (k >= 1 && j == 0 && i >= 1) //bot
                         {
                             indices.Add(vertices.Count - 1);
                             indices.Add(vertices.Count - 1 - 1);
-                            indices.Add(vertices.Count - 1 - 1 - sampleresolution_U * sampleresolution_V);
-                            indices.Add(vertices.Count - 1 - sampleresolution_U * sampleresolution_V);
+                            indices.Add(vertices.Count - 1 - 1 - samplingResolution_U * samplingResolution_V);
+                            indices.Add(vertices.Count - 1 - samplingResolution_U * samplingResolution_V);
                         }
-                        if (k >= 1 && j == sampleresolution_V - 1 && i >= 1) //top
+                        if (k >= 1 && j == samplingResolution_V - 1 && i >= 1) //top
                         {
-                            indices.Add(vertices.Count - 1 - sampleresolution_U * sampleresolution_V);
-                            indices.Add(vertices.Count - 1 - 1 - sampleresolution_U * sampleresolution_V);
+                            indices.Add(vertices.Count - 1 - samplingResolution_U * samplingResolution_V);
+                            indices.Add(vertices.Count - 1 - 1 - samplingResolution_U * samplingResolution_V);
                             indices.Add(vertices.Count - 1 - 1);
                             indices.Add(vertices.Count - 1);
                         }
@@ -124,23 +123,23 @@ public class NaiveParametric
                         //i=u,j=v;k=w;
                         int loopindex1 = i;
                         int loopindex2 = j;
-                        int sampleres = sampleresolution_U;
-                        if (isusingU)
+                        int sampleres = samplingResolution_U;
+                        if (usingU)
                         {
                             loopindex1 = i;
-                            sampleres = sampleresolution_U;
-                            if (isusingV)
+                            sampleres = samplingResolution_U;
+                            if (usingV)
                             {
                                 loopindex2 = j;
                             }
-                            else if (isusingW)
+                            else if (usingW)
                             {
                                 loopindex2 = k;
                             }
                         }
                         else
                         {
-                            sampleres = sampleresolution_V;
+                            sampleres = samplingResolution_V;
                             loopindex1 = k;
                             loopindex2 = j;
                         }
@@ -162,6 +161,16 @@ public class NaiveParametric
                     #endregion
                 }
             }
+        }
+
+        Mesh mesh = inmesh;
+        if (SystemInfo.supports32bitsIndexBuffer)
+        {
+            mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        }
+        else
+        {
+            // Already using default Uint16
         }
         mesh.SetVertices(vertices);
         if (numOfDimensions == 1)

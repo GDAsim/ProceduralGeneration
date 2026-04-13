@@ -1,75 +1,99 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
+[ExecuteInEditMode]
 public class NaiveParametricmetric_Example : MonoBehaviour
 {
-    [SerializeField] MeshFilter meshfilter;
+    public enum ParametricFunction
+    {
+        Cube,
+        Sphere,
+    }
 
-    bool usingU;
-    bool usingV;
-    bool usingW;
+    [Header("Data")]
+    public ParametricFunction parametricFunction = ParametricFunction.Cube;
 
-    float uMinDomain;
-    float uMaxDomain;
+    [Header("Parametric")]
+    [SerializeField] Vector2 uDomain = new Vector2(-1, 1);
+    [SerializeField] Vector2 vDomain = new Vector2(-1, 1);
+    [SerializeField] Vector2 wDomain = new Vector2(-1, 1);
 
-    float vMinDomain;
-    float vMaxDomain;
+    [SerializeField] int sampleresolution_U = 100;
+    [SerializeField] int sampleresolution_V = 100;
+    [SerializeField] int sampleresolution_W = 100;
 
-    float wMinDomain;
-    float wMaxDomain;
+    [Header("Mesh")]
+    [SerializeField] Material meshMaterial;
 
-    int sampleresolution_U;
-    int sampleresolution_V;
-    int sampleresolution_W;
-
+    NaiveParametric parametricMesh = new();
+    GameObject meshGO;
+    Mesh mesh;
     void Start()
     {
-        usingU = true;
-        usingV = true;
-        usingW = true;
+        meshGO = new($"Parametric Mesh");
+        mesh = new Mesh();
+        meshGO.transform.parent = transform;
+        meshGO.AddComponent<MeshFilter>();
+        meshGO.AddComponent<MeshRenderer>();
+        meshGO.GetComponent<Renderer>().material = meshMaterial;
+        meshGO.GetComponent<MeshFilter>().mesh = mesh;
 
-        uMinDomain = -1;
-        uMaxDomain = 1;
-
-        vMinDomain = -1;
-        vMaxDomain = 1;
-
-        wMinDomain = -1;
-        wMaxDomain = 1;
-
-        sampleresolution_U = 100;
-        sampleresolution_V = 100;
-        sampleresolution_W = 100;
-
-
-        var mesh = GetComponent<MeshFilter>().mesh;
-
-        NaiveParametric parametricMesh = new();
-        parametricMesh.parametricFunction = ParametricFunc.Cube;
-        parametricMesh.CreateParametricMesh(mesh,
-                                usingU, usingV, usingW,
-                                uMinDomain, uMaxDomain,
-                                vMinDomain, vMaxDomain,
-                                wMinDomain, wMaxDomain,
-                                sampleresolution_U, sampleresolution_V, sampleresolution_W);
+        Run();
     }
-
     void Update()
     {
-        //if (Input.GetKey(KeyCode.Space))
-        //{
-        //    var mesh = GetComponent<MeshFilter>().mesh;
-
-        //    NaiveParametric parametricMesh = new();
-        //    parametricMesh.parametricFunction = parameticCubeFunc;
-        //    parametricMesh.CreateParametricMesh(mesh,
-        //                            usingU, usingV, usingW,
-        //                            uMinDomain, uMaxDomain,
-        //                            vMinDomain, vMaxDomain,
-        //                            wMinDomain, wMaxDomain,
-        //                            sampleresolution_U, sampleresolution_V, sampleresolution_W);
-        //}
+        
     }
+    void OnValidate()
+    {
+        if (meshGO == null)
+        {
+            meshGO = new($"Parametric Mesh");
+            mesh = new Mesh();
+            meshGO.transform.parent = transform;
+            meshGO.AddComponent<MeshFilter>();
+            meshGO.AddComponent<MeshRenderer>();
+            meshGO.GetComponent<Renderer>().material = meshMaterial;
+            meshGO.GetComponent<MeshFilter>().mesh = mesh;
+        }
 
-    
+
+        switch (parametricFunction)
+        {
+            case ParametricFunction.Cube:
+                uDomain = new Vector2(-1, 1);
+                vDomain = new Vector2(-1, 1);
+                wDomain = new Vector2(-1, 1);
+                parametricMesh.SetParametricFunction(ParametricFunc.Cube, true, true, true);
+                break;
+            case ParametricFunction.Sphere:
+                uDomain = new Vector2(-Mathf.PI, Mathf.PI);
+                vDomain = new Vector2(-Mathf.PI, Mathf.PI);
+                parametricMesh.SetParametricFunction(ParametricFunc.Sphere, true, true, false);
+                break;
+            default:
+                break;
+        }
+
+        parametricMesh.ModifyMesh(mesh,
+            uDomain, vDomain, wDomain,
+            sampleresolution_U, sampleresolution_V, sampleresolution_W);
+
+        foreach (Transform child in transform)
+        {
+            if (child != meshGO.transform)
+            {
+                DestroyImmediate(child.gameObject);
+            }
+        }
+    }
+    void Run()
+    {
+        
+
+        //if (!meshGO) return;
+        //parametricMesh.ModifyMesh(mesh,
+        //    uDomain, vDomain, wDomain,
+        //    sampleresolution_U, sampleresolution_V, sampleresolution_W);
+        
+    }
 }
