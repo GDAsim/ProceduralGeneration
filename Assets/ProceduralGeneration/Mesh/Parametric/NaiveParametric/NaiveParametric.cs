@@ -22,7 +22,7 @@ public class NaiveParametric
         this.usingV = usingV;
         this.usingW = usingW;
     }
-    public Mesh ModifyMesh(Mesh inmesh,
+    public void ModifyMesh(Mesh inmesh,
         Vector2 uDomainRange, Vector2 vDomainRange, Vector2 wDomainRange,
         int samplingResolution_U, int samplingResolution_V, int samplingResolution_W)
     {
@@ -163,27 +163,26 @@ public class NaiveParametric
             }
         }
 
-        Mesh mesh = inmesh;
         if (SystemInfo.supports32bitsIndexBuffer)
         {
-            mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+            inmesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         }
         else
         {
             // Already using default Uint16
         }
-        mesh.SetVertices(vertices);
+        inmesh.Clear();
+        inmesh.SetVertices(vertices);
         if (numOfDimensions == 1)
         {
-            mesh.SetIndices(indices.ToArray(), MeshTopology.LineStrip, 0);
+            inmesh.SetIndices(indices.ToArray(), MeshTopology.LineStrip, 0);
 
         }
         else if (numOfDimensions == 2 || numOfDimensions == 3)
         {
-            mesh.SetIndices(indices.ToArray(), MeshTopology.Quads, 0);
-            mesh.RecalculateNormals();
+            inmesh.SetIndices(indices.ToArray(), MeshTopology.Quads, 0);
+            inmesh.RecalculateNormals();
         }
-        mesh.RecalculateBounds();
-        return mesh;
+        inmesh.RecalculateBounds();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.XR;
 
 [ExecuteInEditMode]
 public class NaiveParametricmetric_Example : MonoBehaviour
@@ -39,10 +40,6 @@ public class NaiveParametricmetric_Example : MonoBehaviour
 
         Run();
     }
-    void Update()
-    {
-        
-    }
     void OnValidate()
     {
         if (meshGO == null)
@@ -50,13 +47,35 @@ public class NaiveParametricmetric_Example : MonoBehaviour
             meshGO = new($"Parametric Mesh");
             mesh = new Mesh();
             meshGO.transform.parent = transform;
+            meshGO.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             meshGO.AddComponent<MeshFilter>();
             meshGO.AddComponent<MeshRenderer>();
             meshGO.GetComponent<Renderer>().material = meshMaterial;
             meshGO.GetComponent<MeshFilter>().mesh = mesh;
         }
 
-
+        Run();
+    }
+    void Update()
+    {
+        // Clean up 
+        foreach (Transform child in transform)
+        {
+            if (child != meshGO.transform)
+            {
+                if(Application.isPlaying)
+                {
+                    Destroy(child.gameObject);
+                }
+                else
+                {
+                    DestroyImmediate(child.gameObject);
+                }
+            }
+        }
+    }
+    void Run()
+    {
         switch (parametricFunction)
         {
             case ParametricFunction.Cube:
@@ -77,23 +96,5 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         parametricMesh.ModifyMesh(mesh,
             uDomain, vDomain, wDomain,
             sampleresolution_U, sampleresolution_V, sampleresolution_W);
-
-        foreach (Transform child in transform)
-        {
-            if (child != meshGO.transform)
-            {
-                DestroyImmediate(child.gameObject);
-            }
-        }
-    }
-    void Run()
-    {
-        
-
-        //if (!meshGO) return;
-        //parametricMesh.ModifyMesh(mesh,
-        //    uDomain, vDomain, wDomain,
-        //    sampleresolution_U, sampleresolution_V, sampleresolution_W);
-        
     }
 }
