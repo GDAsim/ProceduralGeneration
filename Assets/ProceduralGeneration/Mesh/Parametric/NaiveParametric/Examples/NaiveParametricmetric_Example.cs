@@ -38,6 +38,8 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         meshGO.GetComponent<Renderer>().material = meshMaterial;
         meshGO.GetComponent<MeshFilter>().mesh = mesh;
 
+        meshGO.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+
         Run();
     }
     void OnValidate()
@@ -47,12 +49,13 @@ public class NaiveParametricmetric_Example : MonoBehaviour
             meshGO = new($"Parametric Mesh");
             mesh = new Mesh();
             meshGO.transform.parent = transform;
-            meshGO.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             meshGO.AddComponent<MeshFilter>();
             meshGO.AddComponent<MeshRenderer>();
             meshGO.GetComponent<Renderer>().material = meshMaterial;
             meshGO.GetComponent<MeshFilter>().mesh = mesh;
         }
+
+        meshGO.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
 
         Run();
     }
