@@ -205,7 +205,7 @@ public class MarchingCubes_Example : MonoBehaviour
                                 (x - t / 2f) * GridSize / GridResolution,
                                 (y - t / 2f) * GridSize / GridResolution,
                                 (z - t / 2f) * GridSize / GridResolution);
-                            bufferGrid[x, y, z] = -DensityFunc.Box_Implicit(offset.x, offset.y, offset.z);
+                            bufferGrid[x, y, z] = sf(offset.x, offset.y, offset.z);
                         }
                     }
                 }
@@ -217,6 +217,12 @@ public class MarchingCubes_Example : MonoBehaviour
         }
 
         
+    }
+
+    public float sf(float x, float y, float z)
+    {
+        return 2.0f * z * (z * z - 3.0f * x * x) * (1.0f - y * y) + Mathf.Pow((x * x + z * z), 2) - (2.0f * y * y - 1.0f) * (1.0f - y * y);
+            
     }
 
     void OnDrawGizmos()

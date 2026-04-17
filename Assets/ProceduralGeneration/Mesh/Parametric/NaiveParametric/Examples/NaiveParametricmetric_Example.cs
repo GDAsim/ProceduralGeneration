@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.XR;
 
 [ExecuteInEditMode]
 public class NaiveParametricmetric_Example : MonoBehaviour
@@ -8,6 +7,13 @@ public class NaiveParametricmetric_Example : MonoBehaviour
     {
         Cube,
         Sphere,
+        Moebius,
+        Sphere2,
+        Sphere3,
+        Sphere4,
+        Sphere5,
+        Sphere6,
+
     }
 
     [Header("Data")]
@@ -91,6 +97,11 @@ public class NaiveParametricmetric_Example : MonoBehaviour
                 uDomain = new Vector2(-Mathf.PI, Mathf.PI);
                 vDomain = new Vector2(-Mathf.PI, Mathf.PI);
                 parametricMesh.SetParametricFunction(ParametricFunc.Sphere, true, true, false);
+                break;
+            case ParametricFunction.Moebius:
+                uDomain = new Vector2(-0.4f, 0.4f);
+                vDomain = new Vector2(0, 2 * Mathf.PI);
+                parametricMesh.SetParametricFunction(ParametricFunc.Moebius, true, true, false);
                 break;
             default:
                 break;
