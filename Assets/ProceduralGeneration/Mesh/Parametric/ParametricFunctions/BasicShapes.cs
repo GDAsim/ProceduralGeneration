@@ -8,6 +8,17 @@ public static partial class ParametricFunc
     /// <summary>
     /// uDomain = new Vector2(-1, 1);
     /// vDomain = new Vector2(-1, 1);
+    /// </summary>
+    public static void Plane(double u, double v, double w, out double x, out double y, out double z)
+    {
+        x = u;
+        y = v;
+        z = 0;
+    }
+
+    /// <summary>
+    /// uDomain = new Vector2(-1, 1);
+    /// vDomain = new Vector2(-1, 1);
     /// wDomain = new Vector2(-1, 1);
     /// </summary>
     public static void Cube(double u, double v, double w, out double x, out double y, out double z)
@@ -38,4 +49,23 @@ public static partial class ParametricFunc
         y = u * Math.Sin(v * 0.5);
         z = Math.Sin(v) + u * Math.Cos(v * 0.5) * Math.Sin(v);
     }
+
+    //public static void Plane2(double u, double v, double w, out double x, out double y, out double z)
+    //{
+    //    x = cos(u) * (4 + 3.8 * cos(v))
+    //    y = (cos(v) + sin(v) - 1) * (1 + sin(v)) * log(1 - pi * v / 10) + 7.5 * sin(v)
+    //    z = sin(u) * (4 + 3.8 * cos(v))
+    //}
+    //public static void Horn(double u, double v, double w, out double x, out double y, out double z)
+    //{
+    //    x = (2 + u * cos(v)) * sin(2 * pi * u)
+    //    y = u * sin(v)
+    //    z = 0
+    //}
+    //public static void Trumpet(double u, double v, double w, out double x, out double y, out double z)
+    //{
+    //    x = cos(u) * sin(v)
+    //    y = (cos(v) + log(tan(1 / 2 * v)))
+    //    z = sin(u) * sin(v)
+    //}
 }

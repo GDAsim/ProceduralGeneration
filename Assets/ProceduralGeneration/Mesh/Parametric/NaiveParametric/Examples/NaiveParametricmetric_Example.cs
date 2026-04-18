@@ -5,6 +5,7 @@ public class NaiveParametricmetric_Example : MonoBehaviour
 {
     public enum ParametricFunction
     {
+        Plane,
         Cube,
         Sphere,
         Moebius,
@@ -12,7 +13,6 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         Sphere3,
         Sphere4,
         Sphere5,
-        Sphere6,
 
     }
 
@@ -87,6 +87,11 @@ public class NaiveParametricmetric_Example : MonoBehaviour
     {
         switch (parametricFunction)
         {
+            case ParametricFunction.Plane:
+                uDomain = new Vector2(-1, 1);
+                vDomain = new Vector2(-1, 1);
+                parametricMesh.SetParametricFunction(ParametricFunc.Plane, true, true, false);
+                break;
             case ParametricFunction.Cube:
                 uDomain = new Vector2(-1, 1);
                 vDomain = new Vector2(-1, 1);
