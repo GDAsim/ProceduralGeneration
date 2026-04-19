@@ -50,6 +50,19 @@ public static partial class ParametricFunc
         z = Math.Sin(v) + u * Math.Cos(v * 0.5) * Math.Sin(v);
     }
 
+    /// <summary>
+    /// Butterfly curve by Temple H. Fay
+    /// uDomain = new Vector2(0, 12 * Mathf.PI);
+    /// sampleresolution_U = 3000;
+    /// </summary>
+    public static void ButterflyCurve(double u, double v, double w, out double x, out double y, out double z)
+    {
+        var radius = Math.Pow(Math.E, Math.Sin(u)) - 2 * Math.Cos(4 * u) + Math.Pow(Math.Sin(u / 12), 5);
+        x = Math.Cos(u) * radius;
+        y = Math.Sin(u) * radius;
+        z = 0;
+    }
+
     //public static void Plane2(double u, double v, double w, out double x, out double y, out double z)
     //{
     //    x = cos(u) * (4 + 3.8 * cos(v))
