@@ -9,7 +9,7 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         Cube,
         Sphere,
         Moebius,
-        Sphere2,
+        Torus,
         Sphere3,
         Sphere4,
         ButterflyCurve,
@@ -90,23 +90,39 @@ public class NaiveParametricmetric_Example : MonoBehaviour
             case ParametricFunction.Plane:
                 uDomain = new Vector2(-1, 1);
                 vDomain = new Vector2(-1, 1);
+                sampleresolution_U = 100;
+                sampleresolution_V = 100;
                 parametricMesh.SetParametricFunction(ParametricFunc.Plane, true, true, false);
                 break;
             case ParametricFunction.Cube:
                 uDomain = new Vector2(-1, 1);
                 vDomain = new Vector2(-1, 1);
                 wDomain = new Vector2(-1, 1);
+                sampleresolution_U = 100;
+                sampleresolution_V = 100;
+                sampleresolution_W = 100;
                 parametricMesh.SetParametricFunction(ParametricFunc.Cube, true, true, true);
                 break;
             case ParametricFunction.Sphere:
                 uDomain = new Vector2(-Mathf.PI, Mathf.PI);
                 vDomain = new Vector2(-Mathf.PI, Mathf.PI);
+                sampleresolution_U = 100;
+                sampleresolution_V = 100;
                 parametricMesh.SetParametricFunction(ParametricFunc.Sphere, true, true, false);
                 break;
             case ParametricFunction.Moebius:
                 uDomain = new Vector2(-0.4f, 0.4f);
                 vDomain = new Vector2(0, 2 * Mathf.PI);
+                sampleresolution_U = 100;
+                sampleresolution_V = 100;
                 parametricMesh.SetParametricFunction(ParametricFunc.Moebius, true, true, false);
+                break;
+            case ParametricFunction.Torus:
+                uDomain = new Vector2(0, 2 * Mathf.PI);
+                vDomain = new Vector2(0, 2 * Mathf.PI);
+                sampleresolution_U = 100;
+                sampleresolution_V = 100;   
+                parametricMesh.SetParametricFunction(ParametricFunc.Torus, true, true, false);
                 break;
             case ParametricFunction.ButterflyCurve:
                 uDomain = new Vector2(0, 12 * Mathf.PI);

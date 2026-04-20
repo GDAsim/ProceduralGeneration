@@ -63,6 +63,18 @@ public static partial class ParametricFunc
         z = 0;
     }
 
+    /// <summary>
+    /// uDomain = new Vector2(0, 12 * Mathf.PI);
+    /// sampleresolution_U = 3000;
+    /// </summary>
+    public static void Torus(double u, double v, double w, out double x, out double y, out double z)
+    {
+        x = (1.0 + 0.5 * Math.Cos(u)) * Math.Cos(v);
+        y = 0.5 * Math.Sin(u);
+        z = (1.0 + 0.5 * Math.Cos(u)) * Math.Sin(v);
+    }
+
+
     //public static void Plane2(double u, double v, double w, out double x, out double y, out double z)
     //{
     //    x = cos(u) * (4 + 3.8 * cos(v))
