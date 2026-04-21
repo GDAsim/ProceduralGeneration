@@ -10,7 +10,7 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         Sphere,
         Moebius,
         Torus,
-        Sphere3,
+        Horn,
         Sphere4,
         ButterflyCurve,
 
@@ -123,6 +123,13 @@ public class NaiveParametricmetric_Example : MonoBehaviour
                 sampleresolution_U = 100;
                 sampleresolution_V = 100;   
                 parametricMesh.SetParametricFunction(ParametricFunc.Torus, true, true, false);
+                break;
+            case ParametricFunction.Horn:
+                uDomain = new Vector2(0, 1);
+                vDomain = new Vector2(0, 2 * Mathf.PI);
+                sampleresolution_U = 100;
+                sampleresolution_V = 100;
+                parametricMesh.SetParametricFunction(ParametricFunc.Horn, true, true, false);
                 break;
             case ParametricFunction.ButterflyCurve:
                 uDomain = new Vector2(0, 12 * Mathf.PI);

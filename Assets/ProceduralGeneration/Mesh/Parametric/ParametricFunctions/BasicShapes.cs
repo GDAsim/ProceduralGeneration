@@ -74,23 +74,10 @@ public static partial class ParametricFunc
         z = (1.0 + 0.5 * Math.Cos(u)) * Math.Sin(v);
     }
 
-
-    //public static void Plane2(double u, double v, double w, out double x, out double y, out double z)
-    //{
-    //    x = cos(u) * (4 + 3.8 * cos(v))
-    //    y = (cos(v) + sin(v) - 1) * (1 + sin(v)) * log(1 - pi * v / 10) + 7.5 * sin(v)
-    //    z = sin(u) * (4 + 3.8 * cos(v))
-    //}
-    //public static void Horn(double u, double v, double w, out double x, out double y, out double z)
-    //{
-    //    x = (2 + u * cos(v)) * sin(2 * pi * u)
-    //    y = u * sin(v)
-    //    z = 0
-    //}
-    //public static void Trumpet(double u, double v, double w, out double x, out double y, out double z)
-    //{
-    //    x = cos(u) * sin(v)
-    //    y = (cos(v) + log(tan(1 / 2 * v)))
-    //    z = sin(u) * sin(v)
-    //}
+    public static void Horn(double u, double v, double w, out double x, out double y, out double z)
+    {
+        x = (2 + u * Math.Cos(v)) * Math.Sin(2 * Math.PI * u);
+        y = u * Math.Sin(v);
+        z = (2 + u * Math.Cos(v)) * Math.Cos(2 * Math.PI * u) + 2 * u;
+    }
 }
