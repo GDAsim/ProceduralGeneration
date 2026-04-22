@@ -80,4 +80,11 @@ public static partial class ParametricFunc
         y = u * Math.Sin(v);
         z = (2 + u * Math.Cos(v)) * Math.Cos(2 * Math.PI * u) + 2 * u;
     }
+
+    public static void HelixCurve(double u, double v, double w, out double x, out double y, out double z)
+    {
+        x = Math.Sin(u);
+        y = (u * u) / 100;
+        z = Math.Cos(u);
+    }
 }
