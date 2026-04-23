@@ -12,7 +12,7 @@ public class MarchingCubes_Example : MonoBehaviour
         PerlinNoise,
         Sphere,
         Box,
-        Box1,
+        SchwarzP,
         Box2,
         Box3,
         Box4,
@@ -137,80 +137,44 @@ public class MarchingCubes_Example : MonoBehaviour
         switch (samplingFunction)
         {
             case SamplingFunction.PerlinNoise:
-
-                for (int x = 0; x <= GridResolution; x++)
+                SampleGridWithFunction((pos) =>
                 {
-                    for (int y = 0; y <= GridResolution; y++)
-                    {
-                        for (int z = 0; z <= GridResolution; z++)
-                        {
-                            bufferGrid[x, y, z] = DensityFunc.PerlinNoise3D(
-                             Time.time + ((x + NoiseOffset.x + Mathf.Epsilon) * NoiseResolution),
-                             Time.time + ((y + NoiseOffset.y + Mathf.Epsilon) * NoiseResolution),
-                             Time.time + ((z + NoiseOffset.z + Mathf.Epsilon) * NoiseResolution));
-                        }
-                    }
-                }
-
+                    return DensityFunc.PerlinNoise3D(
+                             Time.time + ((pos.x + NoiseOffset.x + Mathf.Epsilon) * NoiseResolution),
+                             Time.time + ((pos.y + NoiseOffset.y + Mathf.Epsilon) * NoiseResolution),
+                             Time.time + ((pos.z + NoiseOffset.z + Mathf.Epsilon) * NoiseResolution));
+                });
                 return;
             case SamplingFunction.Sphere:
                 var radius = 0.5f;
-                for (int x = 0; x <= GridResolution; x++)
+                SampleGridWithFunction((pos) =>
                 {
-                    for (int y = 0; y <= GridResolution; y++)
-                    {
-                        for (int z = 0; z <= GridResolution; z++)
-                        {
-                            var t = GridResolution + 1;
-                            Vector3 offset = new Vector3(
-                                (x - t / 2f) * GridSize / GridResolution,
-                                (y - t / 2f) * GridSize / GridResolution,
-                                (z - t / 2f) * GridSize / GridResolution);
-                            bufferGrid[x, y, z] = DensityFunc.Sphere(offset, radius);
-                        }
-                    }
-                }
-
+                    var t = GridResolution + 1;
+                    Vector3 offset = new(
+                        (pos.x - t / 2f) * GridSize / GridResolution,
+                        (pos.y - t / 2f) * GridSize / GridResolution,
+                        (pos.z - t / 2f) * GridSize / GridResolution);
+                    return DensityFunc.Sphere(offset, radius);
+                });
                 return;
             case SamplingFunction.Box:
                 var boxSize = new Vector3(0.45f, 0.45f, 0.45f);
-                for (int x = 0; x <= GridResolution; x++)
+                SampleGridWithFunction((pos) =>
                 {
-                    for (int y = 0; y <= GridResolution; y++)
-                    {
-                        for (int z = 0; z <= GridResolution; z++)
-                        {
-                            var t = GridResolution + 1;
-                            Vector3 offset = new Vector3(
-                                (x - t / 2f) * GridSize / GridResolution,
-                                (y - t / 2f) * GridSize / GridResolution,
-                                (z - t / 2f) * GridSize / GridResolution);
-                            bufferGrid[x, y, z] = DensityFunc.Box(offset, boxSize);
-                        }
-                    }
-                }
+                    var t = GridResolution + 1;
+                    Vector3 offset = new(
+                       (pos.x - t / 2f) * GridSize / GridResolution,
+                       (pos.y - t / 2f) * GridSize / GridResolution,
+                       (pos.z - t / 2f) * GridSize / GridResolution);
+                    return DensityFunc.Box(offset, boxSize);
+                });
+                return;
+            case SamplingFunction.SchwarzP:
+                
 
                 return;
 
-            case SamplingFunction.Box1:
-                var boxSize2 = new Vector3(0.45f, 0.45f, 0.45f);
-                for (int x = 0; x <= GridResolution; x++)
-                {
-                    for (int y = 0; y <= GridResolution; y++)
-                    {
-                        for (int z = 0; z <= GridResolution; z++)
-                        {
-                            var t = GridResolution + 1;
-                            Vector3 offset = new Vector3(
-                                (x - t / 2f) * GridSize / GridResolution,
-                                (y - t / 2f) * GridSize / GridResolution,
-                                (z - t / 2f) * GridSize / GridResolution);
-                            bufferGrid[x, y, z] = sf(offset.x, offset.y, offset.z);
-                        }
-                    }
-                }
-
-                return;
+            
             default:
 
                 return;
@@ -218,11 +182,19 @@ public class MarchingCubes_Example : MonoBehaviour
 
         
     }
-
-    public float sf(float x, float y, float z)
+    void SampleGridWithFunction(Func<Vector3, float> samplingFunction)
     {
-        return 2.0f * z * (z * z - 3.0f * x * x) * (1.0f - y * y) + Mathf.Pow((x * x + z * z), 2) - (2.0f * y * y - 1.0f) * (1.0f - y * y);
-            
+        for (int x = 0; x <= GridResolution; x++)
+        {
+            for (int y = 0; y <= GridResolution; y++)
+            {
+                for (int z = 0; z <= GridResolution; z++)
+                {
+                    var pos = new Vector3(x, y, z);
+                    bufferGrid[x, y, z] = samplingFunction(pos);
+                }
+            }
+        }
     }
 
     void OnDrawGizmos()

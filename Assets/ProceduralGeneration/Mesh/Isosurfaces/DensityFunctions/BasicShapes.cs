@@ -1,4 +1,4 @@
-// Basic Shapes
+// Basic Shapes SDF Sampling Functions
 
 using UnityEngine;
 
