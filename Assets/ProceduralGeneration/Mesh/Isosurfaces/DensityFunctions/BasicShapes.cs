@@ -89,4 +89,9 @@ public static partial class DensityFunc
         return Vector3.Max(quadrant, Vector3.zero).magnitude + Mathf.Min(max, 0.0f);
     }
 
+    public static float SchwartzP(Vector3 pos)
+    {
+        return (Mathf.Cos(pos.x) + Mathf.Cos(pos.y) + Mathf.Cos(pos.z));
+    }
+     
 }

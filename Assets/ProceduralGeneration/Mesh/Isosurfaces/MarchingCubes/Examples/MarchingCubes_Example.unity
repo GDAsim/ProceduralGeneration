@@ -278,6 +278,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1390560134
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1390560136}
+  - component: {fileID: 1390560135}
+  m_Layer: 0
+  m_Name: SchwarzP
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1390560135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1390560134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dce39e1c925fab44a84d7740c4ee8a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  samplingFunction: 3
+  GridResolution: 7
+  GridSize: 1
+  GridOriginOffset: {x: 0, y: 0, z: 0}
+  BinaryThreshold: 0
+  Interpolate: 1
+  NoiseResolution: 0.1
+  NoiseOffset: {x: 0, y: 0, z: 0}
+  meshMaterial: {fileID: 2100000, guid: 62d975aa612020040a43be949ea39665, type: 2}
+--- !u!4 &1390560136
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1390560134}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.023, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1771845328
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,3 +538,4 @@ SceneRoots:
   - {fileID: 94810530}
   - {fileID: 612814918}
   - {fileID: 272058170}
+  - {fileID: 1390560136}
