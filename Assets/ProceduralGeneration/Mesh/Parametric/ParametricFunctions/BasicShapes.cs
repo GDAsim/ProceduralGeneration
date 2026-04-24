@@ -74,6 +74,27 @@ public static partial class ParametricFunc
         z = (1.0 + 0.5 * Math.Cos(u)) * Math.Sin(v);
     }
 
+    /// <summary>
+    /// 1. Create a Circle Surface
+    /// 2. 
+    /// </summary>
+    public static void Torus2(double u, double v, double w, out double x, out double y, out double z)
+    {
+        // 1. Create a Circle Surface on xy plane using u,v
+        x = v * Math.Cos(u * 2 * Math.PI);
+        y = v * Math.Sin(u * 2 * Math.PI);
+
+        // 2. Extend al Rotating along xz
+        z = (2 + x) * Math.Cos(w * 2 * Math.PI);
+        x = (2 + x) * Math.Sin(w * 2 * Math.PI);
+    }
+    public static void Torus3(double u, double v, double w, out double x, out double y, out double z)
+    {
+        x = (1 + v * Math.Cos(u * 2 * Math.PI)) * Math.Sin(w * 2 * Math.PI);
+        y = v * Math.Sin(u * 2 * Mathf.PI);
+        z = (1 + v * Math.Cos(u * 2 * Math.PI)) * Math.Cos(w * 2 * Math.PI);
+    }
+
     public static void Horn(double u, double v, double w, out double x, out double y, out double z)
     {
         x = (2 + u * Math.Cos(v)) * Math.Sin(2 * Math.PI * u);

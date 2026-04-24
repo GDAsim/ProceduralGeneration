@@ -10,6 +10,7 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         Sphere,
         Moebius,
         Torus,
+        Torus2,
         Horn,
         HelixCurve,
         ButterflyCurve,
@@ -37,6 +38,7 @@ public class NaiveParametricmetric_Example : MonoBehaviour
     {
         meshGO = new($"Parametric Mesh");
         mesh = new Mesh();
+        mesh.hideFlags = HideFlags.DontSave;
         meshGO.transform.parent = transform;
         meshGO.AddComponent<MeshFilter>();
         meshGO.AddComponent<MeshRenderer>();
@@ -53,11 +55,13 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         {
             meshGO = new($"Parametric Mesh");
             mesh = new Mesh();
+            mesh.hideFlags = HideFlags.DontSave;
             meshGO.transform.parent = transform;
             meshGO.AddComponent<MeshFilter>();
             meshGO.AddComponent<MeshRenderer>();
             meshGO.GetComponent<Renderer>().material = meshMaterial;
             meshGO.GetComponent<MeshFilter>().mesh = mesh;
+
         }
 
         meshGO.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
@@ -122,6 +126,15 @@ public class NaiveParametricmetric_Example : MonoBehaviour
                 sampleresolution_U = 100;
                 sampleresolution_V = 100;   
                 parametricMesh.SetParametricFunction(ParametricFunc.Torus, true, true, false);
+                break;
+            case ParametricFunction.Torus2:
+                uDomain = new Vector2(0, 1);
+                vDomain = new Vector2(0, 1);
+                wDomain = new Vector2(0, 1);
+                sampleresolution_U = 100;
+                sampleresolution_V = 100;
+                sampleresolution_W = 100;
+                parametricMesh.SetParametricFunction(ParametricFunc.Torus2, true, true, true);
                 break;
             case ParametricFunction.Horn:
                 uDomain = new Vector2(0, 1);
