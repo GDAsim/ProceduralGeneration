@@ -14,6 +14,7 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         Horn,
         HelixCurve,
         ButterflyCurve,
+        HeartCurve,
     }
 
     [Header("Data")]
@@ -75,7 +76,7 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         {
             if (child != meshGO.transform)
             {
-                if(Application.isPlaying)
+                if (Application.isPlaying)
                 {
                     Destroy(child.gameObject);
                 }
@@ -124,7 +125,7 @@ public class NaiveParametricmetric_Example : MonoBehaviour
                 uDomain = new Vector2(0, 2 * Mathf.PI);
                 vDomain = new Vector2(0, 2 * Mathf.PI);
                 sampleresolution_U = 100;
-                sampleresolution_V = 100;   
+                sampleresolution_V = 100;
                 parametricMesh.SetParametricFunction(ParametricFunc.Torus, true, true, false);
                 break;
             case ParametricFunction.Torus2:
@@ -152,6 +153,11 @@ public class NaiveParametricmetric_Example : MonoBehaviour
                 uDomain = new Vector2(0, 12 * Mathf.PI);
                 sampleresolution_U = 3000;
                 parametricMesh.SetParametricFunction(ParametricFunc.ButterflyCurve, true, false, false);
+                break;
+            case ParametricFunction.HeartCurve:
+                uDomain = new Vector2(0, 1);
+                sampleresolution_U = 100;
+                parametricMesh.SetParametricFunction(ParametricFunc.HeartCurve, true, false, false);
                 break;
             default:
                 break;

@@ -50,18 +50,7 @@ public static partial class ParametricFunc
         z = Math.Sin(v) + u * Math.Cos(v * 0.5) * Math.Sin(v);
     }
 
-    /// <summary>
-    /// Butterfly curve by Temple H. Fay
-    /// uDomain = new Vector2(0, 12 * Mathf.PI);
-    /// sampleresolution_U = 3000;
-    /// </summary>
-    public static void ButterflyCurve(double u, double v, double w, out double x, out double y, out double z)
-    {
-        var radius = Math.Pow(Math.E, Math.Sin(u)) - 2 * Math.Cos(4 * u) + Math.Pow(Math.Sin(u / 12), 5);
-        x = Math.Cos(u) * radius;
-        y = Math.Sin(u) * radius;
-        z = 0;
-    }
+
 
     /// <summary>
     /// uDomain = new Vector2(0, 12 * Mathf.PI);
@@ -74,10 +63,6 @@ public static partial class ParametricFunc
         z = (1.0 + 0.5 * Math.Cos(u)) * Math.Sin(v);
     }
 
-    /// <summary>
-    /// 1. Create a Circle Surface
-    /// 2. 
-    /// </summary>
     public static void Torus2(double u, double v, double w, out double x, out double y, out double z)
     {
         // 1. Create a Circle Surface on xy plane using u,v
@@ -87,12 +72,6 @@ public static partial class ParametricFunc
         // 2. Extend al Rotating along xz
         z = (2 + x) * Math.Cos(w * 2 * Math.PI);
         x = (2 + x) * Math.Sin(w * 2 * Math.PI);
-    }
-    public static void Torus3(double u, double v, double w, out double x, out double y, out double z)
-    {
-        x = (1 + v * Math.Cos(u * 2 * Math.PI)) * Math.Sin(w * 2 * Math.PI);
-        y = v * Math.Sin(u * 2 * Mathf.PI);
-        z = (1 + v * Math.Cos(u * 2 * Math.PI)) * Math.Cos(w * 2 * Math.PI);
     }
 
     public static void Horn(double u, double v, double w, out double x, out double y, out double z)
@@ -107,5 +86,29 @@ public static partial class ParametricFunc
         x = Math.Sin(u);
         y = (u * u) / 100;
         z = Math.Cos(u);
+    }
+
+    /// <summary>
+    /// Butterfly curve by Temple H. Fay
+    /// uDomain = new Vector2(0, 12 * Mathf.PI);
+    /// sampleresolution_U = 3000;
+    /// </summary>
+    public static void ButterflyCurve(double u, double v, double w, out double x, out double y, out double z)
+    {
+        var radius = Math.Pow(Math.E, Math.Sin(u)) - 2 * Math.Cos(4 * u) + Math.Pow(Math.Sin(u / 12), 5);
+        x = Math.Cos(u) * radius;
+        y = Math.Sin(u) * radius;
+        z = 0;
+    }
+    public static void HeartCurve(double u, double v, double w, out double x, out double y, out double z)
+    {
+        var a = 2 * Math.PI * u;
+        x = 16 * Math.Pow(Math.Sin(a), 3);
+        y = 13 * Math.Cos(a) - 5 * Math.Cos(2 * a) - 2 * Math.Cos(3 * a) - Math.Cos(4 * a);
+        z = 0;
+
+        x /= 10;
+        y /= 10;
+        z /= 10;
     }
 }
