@@ -107,8 +107,14 @@ public static partial class ParametricFunc
         y = 13 * Math.Cos(a) - 5 * Math.Cos(2 * a) - 2 * Math.Cos(3 * a) - Math.Cos(4 * a);
         z = 0;
 
-        x /= 10;
-        y /= 10;
-        z /= 10;
+        x /= 5;
+        y /= 5;
+        z /= 5;
+    }
+    public static void Shell(double u, double v, double w, out double x, out double y, out double z)
+    {
+        x = ((0.2 + 0.8 * v) * Math.Cos(u * 2 * Math.PI) + v) * Math.Sin(v * 12 * Math.PI) + 2;
+        y = (0.2 + 0.8 * v) * Math.Sin(u * 2 * Math.PI) + 3 * (v) + 0.5;
+        z = ((0.2 + 0.8 * v) * Math.Cos(u * 2 * Math.PI) + v) * Math.Cos(v * 12 * Math.PI) + 2;
     }
 }

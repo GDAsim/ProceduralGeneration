@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 
 [ExecuteInEditMode]
 public class NaiveParametricmetric_Example : MonoBehaviour
@@ -15,6 +16,7 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         HelixCurve,
         ButterflyCurve,
         HeartCurve,
+        Shell,
     }
 
     [Header("Data")]
@@ -158,6 +160,13 @@ public class NaiveParametricmetric_Example : MonoBehaviour
                 uDomain = new Vector2(0, 1);
                 sampleresolution_U = 100;
                 parametricMesh.SetParametricFunction(ParametricFunc.HeartCurve, true, false, false);
+                break;
+            case ParametricFunction.Shell:
+                uDomain = new Vector2(0, 1);
+                vDomain = new Vector2(0, 1);
+                sampleresolution_U = 100;
+                sampleresolution_V = 100;
+                parametricMesh.SetParametricFunction(ParametricFunc.Shell, true, true, false);
                 break;
             default:
                 break;
