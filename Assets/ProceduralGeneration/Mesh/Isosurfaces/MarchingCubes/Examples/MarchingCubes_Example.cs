@@ -13,7 +13,7 @@ public class MarchingCubes_Example : MonoBehaviour
         Sphere,
         Box,
         SchwarzP,
-        Box2,
+        Hyperbolic,
         Box3,
         Box4,
         Box5,
@@ -41,6 +41,7 @@ public class MarchingCubes_Example : MonoBehaviour
     MarchingCubes2 mc = new();
     float[,,] bufferGrid;
     Vector3 gridOrigin;
+    Vector3 gridScale;
 
     void Update()
     {
@@ -67,7 +68,7 @@ public class MarchingCubes_Example : MonoBehaviour
         mc.Setup(GridResolution, bufferGrid);
 
         // Run
-        gridOrigin = transform.position + GridOriginOffset;
+        gridOrigin = GridOriginOffset;
         if (Interpolate)
         {
             (vertices, indices) = mc.MarchCubesInterpolate(gridOrigin, BinaryThreshold, GridSize);
@@ -122,6 +123,8 @@ public class MarchingCubes_Example : MonoBehaviour
 
             GameObject go = new($"Implicit Mesh {i}");
             go.transform.parent = transform;
+            go.transform.localScale = Vector3.one;
+            go.transform.localPosition = Vector3.zero;
             go.AddComponent<MeshFilter>();
             go.AddComponent<MeshRenderer>();
             go.GetComponent<Renderer>().material = meshMaterial;
@@ -177,13 +180,21 @@ public class MarchingCubes_Example : MonoBehaviour
                        (pos.x - t / 2f) * GridSize / GridResolution,
                        (pos.y - t / 2f) * GridSize / GridResolution,
                        (pos.z - t / 2f) * GridSize / GridResolution);
-                    return DensityFunc.SchwartzP(pos);
+                    return DensityFunc.SchwartzP(offset);
                 });
                 return;
-
-
+            case SamplingFunction.Hyperbolic:
+                SampleGridWithFunction(new Vector3(GridResolution, GridResolution, GridResolution), (pos) =>
+                {
+                    var t = GridResolution + 1;
+                    Vector3 offset = new(
+                       (pos.x - t / 2f) * GridSize / GridResolution,
+                       (pos.y - t / 2f) * GridSize / GridResolution,
+                       (pos.z - t / 2f) * GridSize / GridResolution);
+                    return DensityFunc.Hyperbolic(offset);
+                });
+                return;
             default:
-
                 return;
         }
 
@@ -207,13 +218,14 @@ public class MarchingCubes_Example : MonoBehaviour
     void OnDrawGizmos()
     {
         gridOrigin = transform.position + GridOriginOffset;
-        DrawDebugGrid(gridOrigin, GridSize);
+        gridScale = transform.localScale;
+        DrawDebugGrid(gridOrigin, GridSize, gridScale);
     }
 
-    void DrawDebugGrid(Vector3 originOffset, float size)
+    void DrawDebugGrid(Vector3 originOffset, float size, Vector3 scale)
     {
         Gizmos.color = Color.red;
-        var size3 = new Vector3(size, size, size);
-        Gizmos.DrawWireCube(originOffset + size3 / 2, size3);
+        var size3 = scale * size;
+        Gizmos.DrawWireCube(originOffset + size3 / 2, scale * size);
     }
 }
