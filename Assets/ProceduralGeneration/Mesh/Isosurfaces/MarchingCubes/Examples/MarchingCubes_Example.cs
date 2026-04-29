@@ -16,8 +16,8 @@ public class MarchingCubes_Example : MonoBehaviour
         SchwarzP,
         Hyperbolic,
         SixTori,
-        Box5,
-        Box6,
+        CubeCutOutSphere,
+        SphereToCubeImplicit,
         Box7,
     }
 
@@ -156,7 +156,7 @@ public class MarchingCubes_Example : MonoBehaviour
                         (pos.x - t / 2f) * GridSize / GridResolution,
                         (pos.y - t / 2f) * GridSize / GridResolution,
                         (pos.z - t / 2f) * GridSize / GridResolution);
-                    return DensityFunc.Sphere(offset, 0.5f);
+                    return DensityFunc.SphereImplicit(offset, 0.5f);
                 });
                 return;
             case SamplingFunction.SphereSDF:
@@ -213,6 +213,28 @@ public class MarchingCubes_Example : MonoBehaviour
                        (pos.y - t / 2f) * GridSize / GridResolution,
                        (pos.z - t / 2f) * GridSize / GridResolution);
                     return DensityFunc.SixTori(offset);
+                });
+                return;
+            case SamplingFunction.CubeCutOutSphere:
+                SampleGridWithFunction(new Vector3(GridResolution, GridResolution, GridResolution), (pos) =>
+                {
+                    var t = GridResolution + 1;
+                    Vector3 offset = new(
+                       (pos.x - t / 2f) * GridSize / GridResolution,
+                       (pos.y - t / 2f) * GridSize / GridResolution,
+                       (pos.z - t / 2f) * GridSize / GridResolution);
+                    return DensityFunc.CubeCutOutSphere(offset);
+                });
+                return;
+            case SamplingFunction.SphereToCubeImplicit:
+                SampleGridWithFunction(new Vector3(GridResolution, GridResolution, GridResolution), (pos) =>
+                {
+                    var t = GridResolution + 1;
+                    Vector3 offset = new(
+                       (pos.x - t / 2f) * GridSize / GridResolution,
+                       (pos.y - t / 2f) * GridSize / GridResolution,
+                       (pos.z - t / 2f) * GridSize / GridResolution);
+                    return DensityFunc.SphereToCubeImplict(offset);
                 });
                 return;
             default:

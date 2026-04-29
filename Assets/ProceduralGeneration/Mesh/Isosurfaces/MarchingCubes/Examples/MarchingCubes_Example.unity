@@ -278,6 +278,112 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &463833163
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 463833165}
+  - component: {fileID: 463833164}
+  m_Layer: 0
+  m_Name: SphereToCubeImplict
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &463833164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463833163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dce39e1c925fab44a84d7740c4ee8a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  samplingFunction: 8
+  GridResolution: 30
+  GridSize: 11
+  GridOriginOffset: {x: 0, y: 0, z: 0}
+  BinaryThreshold: 0
+  Interpolate: 1
+  NoiseResolution: 0.1
+  NoiseOffset: {x: 0, y: 0, z: 0}
+  meshMaterial: {fileID: 2100000, guid: 62d975aa612020040a43be949ea39665, type: 2}
+--- !u!4 &463833165
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463833163}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 18, y: 0, z: 0}
+  m_LocalScale: {x: 0.09090909, y: 0.09090909, z: 0.09090909}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &503511363
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 503511365}
+  - component: {fileID: 503511364}
+  m_Layer: 0
+  m_Name: BoxCutOutSphere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &503511364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503511363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dce39e1c925fab44a84d7740c4ee8a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  samplingFunction: 7
+  GridResolution: 30
+  GridSize: 3
+  GridOriginOffset: {x: 0, y: 0, z: 0}
+  BinaryThreshold: 0
+  Interpolate: 1
+  NoiseResolution: 0.1
+  NoiseOffset: {x: 0, y: 0, z: 0}
+  meshMaterial: {fileID: 2100000, guid: 62d975aa612020040a43be949ea39665, type: 2}
+--- !u!4 &503511365
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503511363}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 15, y: 0, z: 0}
+  m_LocalScale: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &612814916
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,7 +395,7 @@ GameObject:
   - component: {fileID: 612814918}
   - component: {fileID: 612814917}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: SphereImplicit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -342,12 +448,12 @@ GameObject:
   - component: {fileID: 1279160189}
   - component: {fileID: 1279160188}
   m_Layer: 0
-  m_Name: Hyperbolic (1)
+  m_Name: SixTori
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1279160188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -379,7 +485,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 12, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.06666667, y: 0.06666667, z: 0.06666667}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -701,3 +807,5 @@ SceneRoots:
   - {fileID: 1906868751}
   - {fileID: 147985682}
   - {fileID: 1279160189}
+  - {fileID: 503511365}
+  - {fileID: 463833165}

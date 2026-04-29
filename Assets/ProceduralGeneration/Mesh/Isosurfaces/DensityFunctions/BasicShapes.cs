@@ -1,6 +1,7 @@
 // Basic Shapes SDF Sampling Functions
 
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public static partial class DensityFunc
 {
@@ -89,9 +90,20 @@ public static partial class DensityFunc
         return Vector3.Max(quadrant, Vector3.zero).magnitude + Mathf.Min(max, 0.0f);
     }
 
-    public static float Sphere(Vector3 pos, float radius)
+    public static float SphereImplicit(Vector3 pos, float radius)
     {
         return pos.x * pos.x + pos.y * pos.y + pos.z * pos.z - radius * radius;
+    }
+    public static float CubeImplicit(Vector3 pos, Vector3 size)
+    {
+        float halfX = size.x / 2;
+        float halfY = size.y / 2;
+        float halfZ = size.z / 2;
+
+        return -Mathf.Min(
+            halfX - pos.x, halfX + pos.x,
+            halfY - pos.y, halfY + pos.y,
+            halfZ - pos.z, halfZ + pos.z);
     }
 
     /// <summary>
@@ -126,4 +138,19 @@ public static partial class DensityFunc
         return f1 * f2 * f3 * f4 * f5 * f6;
     }
 
+    public static float CubeCutOutSphere(Vector3 pos)
+    {
+        var cube = CubeImplicit(pos, new Vector3(2, 2, 2));
+        var sphere = SphereImplicit(pos, 1.25f);
+
+        return Mathf.Max(cube, -sphere);
+    }
+
+    public static float SphereToCubeImplict(Vector3 pos)
+    {
+        var t = (Mathf.Cos(Time.time) + 1) / 2;
+
+        var cube = CubeImplicit(pos, new Vector3(5, 5, 5));
+        return Mathf.Min(SphereImplicit(pos, 5 * t), cube);
+    }
 }
