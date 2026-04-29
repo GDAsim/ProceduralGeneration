@@ -68,14 +68,14 @@ public static partial class DensityFunc
     /// <summary>
     /// Sphere True Distance
     /// </summary>
-    public static float Sphere(Vector3 pos, float radius)
+    public static float SphereSDF(Vector3 pos, float radius)
     {
         return pos.magnitude - radius;
     }
     /// <summary>
     /// Box True Distance
     /// </summary>
-    public static float Box(Vector3 pos, Vector3 size)
+    public static float BoxSDF(Vector3 pos, Vector3 size)
     {
         // 1. Simplyfy by only calculating positive quadrant by converting negative pos into positive values using abs()
         // 2. calculate distance using length()
@@ -87,6 +87,11 @@ public static partial class DensityFunc
 
         var max = Mathf.Max(quadrant.x, Mathf.Max(quadrant.y, quadrant.z));
         return Vector3.Max(quadrant, Vector3.zero).magnitude + Mathf.Min(max, 0.0f);
+    }
+
+    public static float Sphere(Vector3 pos, float radius)
+    {
+        return pos.x * pos.x + pos.y * pos.y + pos.z * pos.z - radius * radius;
     }
 
     /// <summary>
@@ -103,6 +108,22 @@ public static partial class DensityFunc
     public static float Hyperbolic(Vector3 pos)
     {
         return pos.x * pos.x + pos.y - pos.z * pos.z;
+    }
+
+    public static float SixTori(Vector3 pos)
+    {
+        float x = pos.x;
+        float y = pos.y;
+        float z = pos.z;
+
+        float f1 = Mathf.Pow(Mathf.Sqrt(x * x + y * y) - 3f, 2f) + z * z - 0.4f;
+        float f2 = Mathf.Pow(Mathf.Sqrt((x - 4.5f) * (x - 4.5f) + z * z) - 3f, 2f) + y * y - 0.4f;
+        float f3 = Mathf.Pow(Mathf.Sqrt((x + 4.5f) * (x + 4.5f) + z * z) - 3f, 2f) + y * y - 0.4f;
+        float f4 = Mathf.Pow(Mathf.Sqrt((y + 4.5f) * (y + 4.5f) + z * z) - 3f, 2f) + x * x - 0.4f;
+        float f5 = Mathf.Pow(Mathf.Sqrt((y - 4.5f) * (y - 4.5f) + z * z) - 3f, 2f) + x * x - 0.4f;
+        float f6 = Mathf.Pow(Mathf.Sqrt(x * x + y * y) - 5f, 2f) + z * z - 0.4f;
+
+        return f1 * f2 * f3 * f4 * f5 * f6;
     }
 
 }

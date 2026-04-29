@@ -11,11 +11,11 @@ public class MarchingCubes_Example : MonoBehaviour
     {
         PerlinNoise,
         Sphere,
+        SphereSDF,
         Box,
         SchwarzP,
         Hyperbolic,
-        Box3,
-        Box4,
+        SixTori,
         Box5,
         Box6,
         Box7,
@@ -149,7 +149,6 @@ public class MarchingCubes_Example : MonoBehaviour
                 });
                 return;
             case SamplingFunction.Sphere:
-                var radius = 0.5f;
                 SampleGridWithFunction(new Vector3(GridResolution, GridResolution, GridResolution), (pos) =>
                 {
                     var t = GridResolution + 1;
@@ -157,7 +156,18 @@ public class MarchingCubes_Example : MonoBehaviour
                         (pos.x - t / 2f) * GridSize / GridResolution,
                         (pos.y - t / 2f) * GridSize / GridResolution,
                         (pos.z - t / 2f) * GridSize / GridResolution);
-                    return DensityFunc.Sphere(offset, radius);
+                    return DensityFunc.Sphere(offset, 0.5f);
+                });
+                return;
+            case SamplingFunction.SphereSDF:
+                SampleGridWithFunction(new Vector3(GridResolution, GridResolution, GridResolution), (pos) =>
+                {
+                    var t = GridResolution + 1;
+                    Vector3 offset = new(
+                        (pos.x - t / 2f) * GridSize / GridResolution,
+                        (pos.y - t / 2f) * GridSize / GridResolution,
+                        (pos.z - t / 2f) * GridSize / GridResolution);
+                    return DensityFunc.SphereSDF(offset, 0.5f);
                 });
                 return;
             case SamplingFunction.Box:
@@ -169,7 +179,7 @@ public class MarchingCubes_Example : MonoBehaviour
                        (pos.x - t / 2f) * GridSize / GridResolution,
                        (pos.y - t / 2f) * GridSize / GridResolution,
                        (pos.z - t / 2f) * GridSize / GridResolution);
-                    return DensityFunc.Box(offset, boxSize);
+                    return DensityFunc.BoxSDF(offset, boxSize);
                 });
                 return;
             case SamplingFunction.SchwarzP:
@@ -192,6 +202,17 @@ public class MarchingCubes_Example : MonoBehaviour
                        (pos.y - t / 2f) * GridSize / GridResolution,
                        (pos.z - t / 2f) * GridSize / GridResolution);
                     return DensityFunc.Hyperbolic(offset);
+                });
+                return;
+            case SamplingFunction.SixTori:
+                SampleGridWithFunction(new Vector3(GridResolution, GridResolution, GridResolution), (pos) =>
+                {
+                    var t = GridResolution + 1;
+                    Vector3 offset = new(
+                       (pos.x - t / 2f) * GridSize / GridResolution,
+                       (pos.y - t / 2f) * GridSize / GridResolution,
+                       (pos.z - t / 2f) * GridSize / GridResolution);
+                    return DensityFunc.SixTori(offset);
                 });
                 return;
             default:
