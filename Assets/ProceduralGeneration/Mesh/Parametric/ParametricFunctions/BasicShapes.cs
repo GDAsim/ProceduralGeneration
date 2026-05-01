@@ -117,4 +117,14 @@ public static partial class ParametricFunc
         y = (0.2 + 0.8 * v) * Math.Sin(u * 2 * Math.PI) + 3 * (v) + 0.5;
         z = ((0.2 + 0.8 * v) * Math.Cos(u * 2 * Math.PI) + v) * Math.Cos(v * 12 * Math.PI) + 2;
     }
+
+    public static void RoseCurve(double u, double v, double w, out double x, out double y, out double z)
+    {
+        var pedelsNum = 6;
+        var angle = u * 2 * Math.PI;
+
+        x = Math.Cos(pedelsNum * angle) * Math.Cos(angle);
+        y = Math.Cos(pedelsNum * angle) * Math.Sin(angle);
+        z = 0;
+    }
 }
