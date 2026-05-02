@@ -18,6 +18,7 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         HeartCurve,
         Shell,
         RoseCurve,
+        Spiral,
     }
 
     [Header("Data")]
@@ -170,11 +171,14 @@ public class NaiveParametricmetric_Example : MonoBehaviour
                 parametricMesh.SetParametricFunction(ParametricFunc.Shell, true, true, false);
                 break;
             case ParametricFunction.RoseCurve:
-                //uDomain = new Vector2(0, 1);
-                //vDomain = new Vector2(0, 1);
-                //sampleresolution_U = 100;
-                //sampleresolution_V = 100;
+                uDomain = new Vector2(0, 1);
+                sampleresolution_U = 100;
                 parametricMesh.SetParametricFunction(ParametricFunc.RoseCurve, true, false, false);
+                break;
+            case ParametricFunction.Spiral:
+                uDomain = new Vector2(0, 1);
+                sampleresolution_U = 100;
+                parametricMesh.SetParametricFunction(ParametricFunc.Spiral, true, false, false);
                 break;
             default:
                 break;

@@ -127,4 +127,14 @@ public static partial class ParametricFunc
         y = Math.Cos(pedelsNum * angle) * Math.Sin(angle);
         z = 0;
     }
+    public static void Spiral(double u, double v, double w, out double x, out double y, out double z)
+    {
+        var radius = 0.1f;
+        var numOfRevolutions = 3;
+        var angle = numOfRevolutions * u * 2 * Math.PI;
+
+        x = radius * angle * Math.Cos(angle);
+        y = radius * angle * Math.Sin(angle);
+        z = 0;
+    }
 }
