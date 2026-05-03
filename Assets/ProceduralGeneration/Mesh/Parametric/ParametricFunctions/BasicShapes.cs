@@ -129,12 +129,24 @@ public static partial class ParametricFunc
     }
     public static void Spiral(double u, double v, double w, out double x, out double y, out double z)
     {
-        var radius = 0.1f;
+        var radius = 0.1;
         var numOfRevolutions = 3;
         var angle = numOfRevolutions * u * 2 * Math.PI;
 
         x = radius * angle * Math.Cos(angle);
         y = radius * angle * Math.Sin(angle);
+        z = 0;
+    }
+
+    public static void LogSpiral(double u, double v, double w, out double x, out double y, out double z)
+    {
+        var innerRadius = 0.1;
+        var windingTightness = 0.1;
+        var numOfRevolutions = 3;
+        var angle = numOfRevolutions * u * 2 * Math.PI;
+
+        x = innerRadius * Math.Exp(windingTightness * angle) * Math.Cos(angle);
+        y = innerRadius * Math.Exp(windingTightness * angle) * Math.Sin(angle);
         z = 0;
     }
 }

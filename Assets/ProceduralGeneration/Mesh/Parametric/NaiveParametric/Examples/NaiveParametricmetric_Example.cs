@@ -19,6 +19,7 @@ public class NaiveParametricmetric_Example : MonoBehaviour
         Shell,
         RoseCurve,
         Spiral,
+        LogSpiral,
     }
 
     [Header("Data")]
@@ -179,6 +180,11 @@ public class NaiveParametricmetric_Example : MonoBehaviour
                 uDomain = new Vector2(0, 1);
                 sampleresolution_U = 100;
                 parametricMesh.SetParametricFunction(ParametricFunc.Spiral, true, false, false);
+                break;
+            case ParametricFunction.LogSpiral:
+                uDomain = new Vector2(0, 1);
+                sampleresolution_U = 100;
+                parametricMesh.SetParametricFunction(ParametricFunc.LogSpiral, true, false, false);
                 break;
             default:
                 break;
