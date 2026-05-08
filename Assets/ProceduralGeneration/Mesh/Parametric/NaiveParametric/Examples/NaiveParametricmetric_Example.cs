@@ -127,8 +127,8 @@ public class NaiveParametricmetric_Example : MonoBehaviour
                 parametricMesh.SetParametricFunction(ParametricFunc.Moebius, true, true, false);
                 break;
             case ParametricFunction.Torus:
-                uDomain = new Vector2(0, 2 * Mathf.PI);
-                vDomain = new Vector2(0, 2 * Mathf.PI);
+                uDomain = new Vector2(0, 1);
+                vDomain = new Vector2(0, 1);
                 sampleresolution_U = 100;
                 sampleresolution_V = 100;
                 parametricMesh.SetParametricFunction(ParametricFunc.Torus, true, true, false);

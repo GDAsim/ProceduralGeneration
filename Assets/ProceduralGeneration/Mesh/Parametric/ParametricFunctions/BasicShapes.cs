@@ -50,17 +50,20 @@ public static partial class ParametricFunc
         z = Math.Sin(v) + u * Math.Cos(v * 0.5) * Math.Sin(v);
     }
 
-
-
     /// <summary>
-    /// uDomain = new Vector2(0, 12 * Mathf.PI);
-    /// sampleresolution_U = 3000;
+    /// uDomain = new Vector2(0, 1);
+    /// vDomain = new Vector2(0, 1);
+    /// sampleresolution_U = 100;
+    /// sampleresolution_V = 100;
     /// </summary>
     public static void Torus(double u, double v, double w, out double x, out double y, out double z)
     {
-        x = (1.0 + 0.5 * Math.Cos(u)) * Math.Cos(v);
-        y = 0.5 * Math.Sin(u);
-        z = (1.0 + 0.5 * Math.Cos(u)) * Math.Sin(v);
+        var majorRadius = 1;
+        var tubeRadius = 0.5;
+
+        x = (majorRadius + tubeRadius * Math.Cos(u * 2 * Mathf.PI)) * Math.Cos(v * 2 * Mathf.PI);
+        y = tubeRadius * Math.Sin(u);
+        z = (majorRadius + tubeRadius * Math.Cos(u * 2 * Mathf.PI)) * Math.Sin(v * 2 * Mathf.PI);
     }
 
     public static void Torus2(double u, double v, double w, out double x, out double y, out double z)
