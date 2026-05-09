@@ -1,40 +1,13 @@
 using UnityEngine;
 
-[ExecuteInEditMode]
-[RequireComponent (typeof(MeshFilter), typeof(MeshRenderer))]
-public class Cube_Example : MonoBehaviour
+public static class Primitive_Cube
 {
-    [Header("Mesh")]
-    [SerializeField] Material meshMaterial;
-
-    [Header("Settings")]
-    [SerializeField] Vector3 size = Vector3.one;
-
-    Mesh mesh;
-
-    void Update()
+    public static Mesh GenerateMesh(Vector3 size)
     {
-        if (!gameObject.GetComponent<MeshFilter>())
-        {
-            gameObject.AddComponent<MeshFilter>();
-            gameObject.GetComponent<MeshFilter>().mesh = mesh;
-        }
-        
-        if (!gameObject.GetComponent<MeshRenderer>())
-        {
-            gameObject.AddComponent<MeshRenderer>();
-            gameObject.GetComponent<MeshRenderer>().material = meshMaterial;
-        }
-
-        
+        return ModifyMesh(new Mesh(), size);
     }
-    void OnValidate()
+    public static Mesh ModifyMesh(Mesh mesh, Vector3 size)
     {
-        mesh = new Mesh();
-        mesh.hideFlags = HideFlags.DontSave;
-        gameObject.GetComponent<MeshFilter>().mesh = mesh;
-        gameObject.GetComponent<MeshRenderer>().material = meshMaterial;
-
         var F_TL = new Vector3(-1, 1, -1);
         var F_BL = new Vector3(-1, -1, -1);
         var F_BR = new Vector3(1, -1, -1);
@@ -80,11 +53,12 @@ public class Cube_Example : MonoBehaviour
             new Vector2(1, 1)  // B_TR
         };
 
-
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.uv = uvs;
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
+
+        return mesh;
     }
 }

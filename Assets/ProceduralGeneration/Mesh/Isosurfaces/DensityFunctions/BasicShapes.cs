@@ -1,7 +1,6 @@
 // Basic Shapes SDF Sampling Functions
 
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public static partial class DensityFunc
 {
