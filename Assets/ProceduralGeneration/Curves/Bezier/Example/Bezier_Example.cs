@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Bezier_Example : MonoBehaviour
@@ -6,18 +7,36 @@ public class Bezier_Example : MonoBehaviour
 
     [SerializeField] int LineSegmentCount = 100;
 
+    public enum Select
+    {
+        Linear,
+        Quadratic,
+        QuadraticString,
+        Cubic,
+    }
+    public Select select = Select.Cubic;
+
     void OnDrawGizmos()
     {
         if (LineSegmentCount < 2) return;
 
         if (!cpManager) return;
 
-        DrawLinear(Color.blue);
-
-        DrawQuad(Color.red);
-        DrawQuadString(Color.blue);
-
-        DrawCubic(Color.black);
+        switch (select)
+        {
+            case Select.Linear:
+                DrawLinear(Color.white);
+                break;
+            case Select.Quadratic:
+                DrawQuad(Color.white);
+                break;
+            case Select.QuadraticString:
+                DrawQuadString(Color.white);
+                break;
+            case Select.Cubic:
+                DrawCubic(Color.white);
+                break;
+        }
     }
     void DrawLinear(Color color)
     {
@@ -37,7 +56,6 @@ public class Bezier_Example : MonoBehaviour
     void DrawQuad(Color color)
     {
         Gizmos.color = color;
-
         var p0 = Bezier.CalculateQuadraticCurve(cpManager.ControlPoints, 0f);
         for (int i = 1; i <= LineSegmentCount; i++)
         {
@@ -48,6 +66,9 @@ public class Bezier_Example : MonoBehaviour
 
             p0 = p1;
         }
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(cpManager.ControlPoints[0], cpManager.ControlPoints[cpManager.ControlPoints.Count / 2]);
     }
     void DrawQuadString(Color color)
     {
@@ -70,7 +91,6 @@ public class Bezier_Example : MonoBehaviour
     void DrawCubic(Color color)
     {
         Gizmos.color = color;
-
         var p0 = Bezier.CalculateCubicCurve2(cpManager.ControlPoints, 0f);
         for (int i = 1; i <= LineSegmentCount; i++)
         {
@@ -81,5 +101,9 @@ public class Bezier_Example : MonoBehaviour
 
             p0 = p1;
         }
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(cpManager.ControlPoints[0], cpManager.ControlPoints[1]);
+        Gizmos.DrawLine(cpManager.ControlPoints[cpManager.ControlPoints.Count - 1], cpManager.ControlPoints[cpManager.ControlPoints.Count - 2]);
     }
 }

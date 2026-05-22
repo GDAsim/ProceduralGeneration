@@ -15,7 +15,7 @@ public class Bezier
         }
 
         var p0 = controlPoints[0];
-        var p1 = controlPoints[1];
+        var p1 = controlPoints[controlPoints.Count - 1];
 
         return (1 - t) * p0 + t * p1;
     }
@@ -32,7 +32,7 @@ public class Bezier
         }
 
         var p0 = controlPoints[0];
-        var p1 = controlPoints[1];
+        var p1 = controlPoints[controlPoints.Count - 1];
 
         return p0 + t * (p1 - p0);
     }
@@ -49,8 +49,8 @@ public class Bezier
         }
 
         var p0 = controlPoints[0];
-        var p1 = controlPoints[1];
-        var p2 = controlPoints[2];
+        var p1 = controlPoints[controlPoints.Count / 2];
+        var p2 = controlPoints[controlPoints.Count - 1];
 
         float u = 1 - t;
         return (u * u) * p0 + (2 * u * t) * p1 + (t * t) * p2;
@@ -68,8 +68,8 @@ public class Bezier
         }
 
         var p0 = controlPoints[0];
-        var p1 = controlPoints[1];
-        var p2 = controlPoints[2];
+        var p1 = controlPoints[controlPoints.Count / 2];
+        var p2 = controlPoints[controlPoints.Count - 1];
 
         var p0p1 = (1 - t) * p0 + t * p1;
         var p1p2 = (1 - t) * p1 + t * p2;
@@ -92,8 +92,8 @@ public class Bezier
 
         var p0 = controlPoints[0];
         var p1 = controlPoints[1];
-        var p2 = controlPoints[2];
-        var p3 = controlPoints[3];
+        var p2 = controlPoints[controlPoints.Count - 2];
+        var p3 = controlPoints[controlPoints.Count - 1];
 
         float u = 1 - t;
         float uu = u * u;
@@ -115,8 +115,8 @@ public class Bezier
 
         var p0 = controlPoints[0];
         var p1 = controlPoints[1];
-        var p2 = controlPoints[2];
-        var p3 = controlPoints[3];
+        var p2 = controlPoints[controlPoints.Count - 2];
+        var p3 = controlPoints[controlPoints.Count - 1];
 
         var p0p1 = (1 - t) * p0 + t * p1;
         var p1p2 = (1 - t) * p1 + t * p2;
