@@ -40,10 +40,10 @@ public class Splines_Example : MonoBehaviour
     {
         Gizmos.color = color;
 
+        var segmentCount = (cpManager.ControlPoints.Count - 1) / 3;
         var p0 = cpManager.ControlPoints[0];
         for (int i = 1; i <= LineSegmentCount; i++)
         {
-            var segmentCount = (cpManager.ControlPoints.Count - 1) / 3;
             var t = (float)i / LineSegmentCount * segmentCount; // 0 - 2
 
             var currentSegment = Mathf.CeilToInt(t) - 1;
