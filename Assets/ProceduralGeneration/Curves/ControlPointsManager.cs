@@ -81,7 +81,7 @@ public class ControlPointsManager : MonoBehaviour
     }
     void EditControlPointsGO()
     {
-        var flag = HideFlags.DontSaveInBuild;
+        var flag = HideFlags.DontSaveInEditor;
         if (!editInHierachy)
         {
             flag |= HideFlags.HideInHierarchy;
