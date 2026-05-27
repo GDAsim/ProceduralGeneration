@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static Unity.VisualScripting.Metadata;
 
 [ExecuteInEditMode]
 public class ControlPointsManager : MonoBehaviour
@@ -32,6 +33,10 @@ public class ControlPointsManager : MonoBehaviour
         }
     }
 
+    void Awake()
+    {
+        SetChildGOAsControlPointsGO();
+    }
     void Update()
     {
         transform.position = Vector3.zero;
@@ -44,6 +49,13 @@ public class ControlPointsManager : MonoBehaviour
         UpdateControlPoints();
     }
 
+    void SetChildGOAsControlPointsGO()
+    {
+        foreach (Transform child in transform)
+        {
+            controlPointsGO.Add(child.gameObject);
+        }
+    }
     void SpawnDespawnControlPoints()
     {
         for (int i = controlPoints.Count; i < count; i++)

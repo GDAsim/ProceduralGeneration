@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 170800851}
   - component: {fileID: 170800850}
   m_Layer: 0
-  m_Name: Bezier_Example (2)
+  m_Name: Bezier_Example_QuadraticString
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 269368121}
   - component: {fileID: 269368120}
   m_Layer: 0
-  m_Name: Bezier_Example (3)
+  m_Name: Bezier_Example_Cubic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -224,7 +224,7 @@ GameObject:
   - component: {fileID: 477555804}
   - component: {fileID: 477555803}
   m_Layer: 0
-  m_Name: Bezier_Example (1)
+  m_Name: Bezier_Example_Quadratic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -273,7 +273,7 @@ GameObject:
   - component: {fileID: 725467608}
   - component: {fileID: 725467607}
   m_Layer: 0
-  m_Name: cp
+  m_Name: ControlPointPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -370,7 +370,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2021050049}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1671088140
 GameObject:
@@ -383,7 +383,7 @@ GameObject:
   - component: {fileID: 1671088142}
   - component: {fileID: 1671088141}
   m_Layer: 0
-  m_Name: Bezier_Example
+  m_Name: Bezier_Example_Linear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -465,14 +465,14 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 725467610}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 725467610}
   - {fileID: 2021050049}
   - {fileID: 1671088142}
   - {fileID: 477555804}
