@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Bezier_Example : MonoBehaviour
@@ -25,15 +24,19 @@ public class Bezier_Example : MonoBehaviour
         switch (select)
         {
             case Select.Linear:
+                if (cpManager.ControlPoints.Count < 2) return;
                 DrawLinear(Color.white);
                 break;
             case Select.Quadratic:
+                if (cpManager.ControlPoints.Count < 3) return;
                 DrawQuad(Color.white);
                 break;
             case Select.QuadraticString:
+                if (cpManager.ControlPoints.Count < 3) return;
                 DrawQuadString(Color.white);
                 break;
             case Select.Cubic:
+                if (cpManager.ControlPoints.Count < 4) return;
                 DrawCubic(Color.white);
                 break;
         }
@@ -66,9 +69,6 @@ public class Bezier_Example : MonoBehaviour
 
             p0 = p1;
         }
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(cpManager.ControlPoints[0], cpManager.ControlPoints[cpManager.ControlPoints.Count / 2]);
     }
     void DrawQuadString(Color color)
     {
@@ -101,9 +101,5 @@ public class Bezier_Example : MonoBehaviour
 
             p0 = p1;
         }
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(cpManager.ControlPoints[0], cpManager.ControlPoints[1]);
-        Gizmos.DrawLine(cpManager.ControlPoints[cpManager.ControlPoints.Count - 1], cpManager.ControlPoints[cpManager.ControlPoints.Count - 2]);
     }
 }
