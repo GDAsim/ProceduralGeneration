@@ -1,111 +1,149 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [ExecuteInEditMode]
 public class ControlPointsManager : MonoBehaviour
 {
-    [SerializeField] int count;
-    [SerializeField] List<Vector3> controlPoints = new();
+    [HideInInspector] public List<Vector3> ControlPoints = new();
 
-    [Header("Editor Settings")]
-    [SerializeField] bool editInHierachy = true;
+    [Header("Gizmo Settings")]
     [SerializeField] bool showGizmoPath = true;
-    [SerializeField] GameObject controlPointPrefab;
+    [SerializeField] float pointsSize = 0.1f;
     [SerializeField] Color pointsColor = Color.yellow;
     [SerializeField] Color pathColor = Color.cyan;
 
+    [Header("Editor Settings")]
+    [SerializeField] bool editInHierachy = true;
     [SerializeField, HideInInspector] List<GameObject> controlPointsGOs = new();
-
-    public List<Vector3> ControlPoints
-    {
-        get => controlPoints;
-        set
-        {
-            controlPoints = value;
-
-            count = controlPoints.Count;
-
-            SpawnDespawnControlPointsGO();
-            EditControlPointsGO();
-
-            for (int i = 0; i < controlPointsGOs.Count; i++)
-            {
-                controlPointsGOs[i].transform.position = controlPoints[i];
-            }
-        }
-    }
-
-    void Start()
-    {
-        controlPointsGOs = new();
-    }
 
     void Update()
     {
         transform.position = Vector3.zero;
 
-        SpawnDespawnControlPoints();
-
-        SpawnDespawnControlPointsGO();
-        EditControlPointsGO();
-
-        UpdateControlPoints();
-    }
-    void SpawnDespawnControlPoints()
-    {
-        for (int i = controlPoints.Count; i < count; i++)
+        if (editInHierachy)
         {
-            controlPoints.Add(new());
+            CleanAndSpawnControlPointsGO();
+            UpdateControlPointsGO();
+            UpdateControlPointsUsingGO();
         }
-        for (int i = controlPoints.Count - 1; i >= count && i >= 0; i--)
+        else
         {
-            controlPoints.RemoveAt(i);
+            DespawnControlPointsGO();
         }
     }
-    void SpawnDespawnControlPointsGO()
+    void CleanAndSpawnControlPointsGO()
     {
-        if (!controlPointPrefab)
+        // Destory null objects
+        for (int i = controlPointsGOs.Count - 1; i >= 0; i--)
         {
-            for (int i = controlPointsGOs.Count - 1; i >= 0; i--)
+            if (controlPointsGOs[i] == null)
             {
-                DestroyImmediate(controlPointsGOs[i]);
                 controlPointsGOs.RemoveAt(i);
             }
-            return;
         }
-        for (int i = controlPointsGOs.Count; i < controlPoints.Count; i++)
-        {
-            var newGO = Instantiate(controlPointPrefab, transform);
-            newGO.transform.position = controlPoints[i];
 
+        // Spawn if not enough
+        for (int i = controlPointsGOs.Count; i < ControlPoints.Count; i++)
+        {
+            var newGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            newGO.transform.SetParent(transform);
+            newGO.transform.position = ControlPoints[i];
             controlPointsGOs.Add(newGO);
         }
-        for (int i = controlPointsGOs.Count - 1; i >= controlPoints.Count && i >= 0; i--)
+    }
+    void DespawnControlPointsGO()
+    {
+        for (int i = controlPointsGOs.Count - 1; i >= 0; i--)
         {
             DestroyImmediate(controlPointsGOs[i]);
             controlPointsGOs.RemoveAt(i);
         }
     }
-    void EditControlPointsGO()
+    void UpdateControlPointsGO()
     {
-        var flag = HideFlags.None;
-        if (!editInHierachy)
-        {
-            flag |= HideFlags.HideInHierarchy;
-        }
+        var scale = 2 * pointsSize * Vector3.one;
         for (int i = 0; i < controlPointsGOs.Count; i++)
         {
-            var cp = controlPointsGOs[i];
-            cp.name = $"Control Point {i}";
-            cp.hideFlags = flag;
-            cp.SetActive(editInHierachy);
+            var controlPointGO = controlPointsGOs[i];
+            controlPointGO.name = $"Control Point {i}";
+            controlPointGO.transform.localScale = scale;
+
+            controlPointGO.GetComponent<MeshRenderer>().sharedMaterial.color = pointsColor;
         }
     }
-    void UpdateControlPoints()
+    void UpdateControlPointsUsingGO()
     {
         for (int i = 0; i < controlPointsGOs.Count; i++)
         {
-            controlPoints[i] = controlPointsGOs[i].transform.position;
+            ControlPoints[i] = controlPointsGOs[i].transform.position;
+        }
+    }
+
+    public void AddControlPoint()
+    {
+        int targetIndex = Mathf.Max(0, ControlPoints.Count);
+        AddControlPoint(targetIndex);
+    }
+    public void AddControlPoint(int index)
+    {
+        if (index < 0 || index > ControlPoints.Count) return;
+
+        Vector3 newPoint;
+        if (index == 0)
+        {
+            newPoint = Vector3.zero;
+        }
+        else if (index == 1)
+        {
+            newPoint = ControlPoints[0] + new Vector3(0.4f, 0, 0);
+        }
+        else if (index == ControlPoints.Count)
+        {
+            newPoint = ControlPoints[index - 1] + new Vector3(0.4f, 0, 0);
+        }
+        else
+        {
+            newPoint = (ControlPoints[index - 1] + ControlPoints[index]) / 2;
+        }
+
+        Undo.IncrementCurrentGroup();
+        Undo.RecordObject(this, "Add Control Point");
+        ControlPoints.Insert(index, newPoint);
+
+        var newGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        newGO.transform.SetParent(transform);
+        newGO.transform.position = newPoint;
+        controlPointsGOs.Add(newGO);
+        Undo.RegisterCreatedObjectUndo(newGO, "Save Curve");
+    }
+    public void RemovePoint()
+    {
+
+    }
+    public void RemovePoint(int index)
+    {
+
+    }
+
+    void OnDrawGizmos()
+    {
+        // Draw Points
+        if (!editInHierachy)
+        {
+            Gizmos.color = pointsColor;
+            for (int i = 0; ControlPoints.Count > i; i++)
+            {
+                var controlPoint = ControlPoints[i];
+                Gizmos.DrawSphere(controlPoint, pointsSize);
+            }
+        }
+
+        // Draw path
+        if (showGizmoPath)
+        {
+            Gizmos.color = pathColor;
+            Gizmos.DrawLineStrip(ControlPoints.ToArray(), false);
         }
     }
 }

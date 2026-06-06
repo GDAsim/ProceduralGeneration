@@ -1,13 +1,23 @@
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 [CustomEditor(typeof(ControlPointsManager), false)]
 public class ControlPointsManagerEditor : Editor
 {
+    ReorderableList keyPoints;
+
     void OnEnable()
     {
         Tools.hidden = true;
+
+        keyPoints = new ReorderableList(serializedObject, serializedObject.FindProperty("ControlPoints"), true, true, false, false);
+        keyPoints.drawHeaderCallback = (Rect rect) =>
+        {
+               EditorGUI.LabelField(rect, string.Format("ControlPoints: {0}", keyPoints.serializedProperty.arraySize), EditorStyles.boldLabel);
+        };
+        keyPoints.drawElementCallback = DrawControlPointsList;
     }
     void OnDisable()
     {
@@ -15,21 +25,7 @@ public class ControlPointsManagerEditor : Editor
     }
     void OnSceneGUI()
     {
-        // Draw path
-        var pathColor = serializedObject.FindProperty("pathColor").colorValue;
-        var showGizmoPathProp = serializedObject.FindProperty("showGizmoPath");
-        if (showGizmoPathProp.boolValue)
-        {
-            var controlPointsProp = serializedObject.FindProperty("controlPoints");
-            Handles.color = pathColor;
-            var polyLines = new List<Vector3>();
-            for (int i = 0; i < controlPointsProp.arraySize - 1; i++)
-            {
-                polyLines.Add(controlPointsProp.GetArrayElementAtIndex(i).vector3Value);
 
-                Handles.DrawLine(controlPointsProp.GetArrayElementAtIndex(i).vector3Value, controlPointsProp.GetArrayElementAtIndex(i + 1).vector3Value);
-            }
-        }
 
         var isEditInHeirachy = serializedObject.FindProperty("editInHierachy");
         if (isEditInHeirachy.boolValue) return;
@@ -57,4 +53,61 @@ public class ControlPointsManagerEditor : Editor
             }
         }
     }
+
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+
+        serializedObject.Update();
+
+        if (GUILayout.Button("Add Point"))
+        {
+            var controlPointManager = (ControlPointsManager)target;
+            controlPointManager.AddControlPoint();
+        }
+
+        keyPoints.DoLayoutList();
+
+        serializedObject.ApplyModifiedProperties();
+    }
+
+    void AddPoint()
+    {
+        AddPointAt(keyPoints.count);
+    }
+    void AddPointAt(int index)
+    {
+        var controlPointManager = (ControlPointsManager)target;
+        controlPointManager.AddControlPoint();
+    }
+
+    void DrawControlPointsList(Rect rect, int index, bool isActive, bool isFocused)
+    {
+        var AddButtonWidth = 100;
+        var RemoveButtonWidth = 100;
+
+        var controlPoint = keyPoints.serializedProperty.GetArrayElementAtIndex(index);
+        rect.y += 2;
+
+        if (GUI.Button(new Rect(rect.x, rect.y, AddButtonWidth, EditorGUIUtility.singleLineHeight), new GUIContent("Add Before")))
+        {
+            //AddKeyPointAt(this.curve, index);
+        }
+
+        EditorGUI.PropertyField(new Rect(rect.x + AddButtonWidth + 5f, rect.y, rect.width - AddButtonWidth * 2f - 35f, EditorGUIUtility.singleLineHeight), controlPoint, GUIContent.none);
+
+        if (GUI.Button(new Rect(rect.width - AddButtonWidth + 8f, rect.y, AddButtonWidth, EditorGUIUtility.singleLineHeight), new GUIContent("Add After")))
+        {
+            //AddKeyPointAt(this.curve, index + 1);
+        }
+
+        //if (this.curve.KeyPointsCount > 2)
+        //{
+        //    if (GUI.Button(new Rect(rect.width + 14f, rect.y, RemoveButtonWidth, EditorGUIUtility.singleLineHeight), new GUIContent("x")))
+        //    {
+        //        //RemoveKeyPointAt(this.curve, index);
+        //    }
+        //}
+    }
+
 }
