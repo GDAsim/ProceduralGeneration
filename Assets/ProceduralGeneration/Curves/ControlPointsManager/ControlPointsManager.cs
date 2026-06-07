@@ -89,14 +89,18 @@ public class ControlPointsManager : MonoBehaviour
     {
         if (index < 0 || index > ControlPoints.Count) return;
 
-        Vector3 newPoint;
-        if (index == 0)
+        Vector3 newPoint = Vector3.zero;
+        if (ControlPoints.Count == 0)
         {
-            newPoint = Vector3.zero;
+
         }
-        else if (index == 1)
+
+        if (ControlPoints.Count > 2)
         {
-            newPoint = ControlPoints[0] + new Vector3(0.4f, 0, 0);
+            if (index < ControlPoints.Count)
+            {
+                newPoint = (ControlPoints[index - 1] + ControlPoints[index]) / 2;
+            }
         }
         else if (index == ControlPoints.Count)
         {
@@ -104,7 +108,14 @@ public class ControlPointsManager : MonoBehaviour
         }
         else
         {
-            newPoint = (ControlPoints[index - 1] + ControlPoints[index]) / 2;
+            if (index == 0)
+            {
+                newPoint = Vector3.zero;
+            }
+            else if (index == 1)
+            {
+                newPoint = ControlPoints[0] + new Vector3(0.4f, 0, 0);
+            }
         }
 
         Undo.IncrementCurrentGroup();

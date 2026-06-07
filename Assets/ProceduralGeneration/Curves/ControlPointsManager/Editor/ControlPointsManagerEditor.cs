@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -6,18 +5,18 @@ using UnityEngine;
 [CustomEditor(typeof(ControlPointsManager), false)]
 public class ControlPointsManagerEditor : Editor
 {
-    ReorderableList keyPoints;
+    ReorderableList controlPoints;
 
     void OnEnable()
     {
         Tools.hidden = true;
 
-        keyPoints = new ReorderableList(serializedObject, serializedObject.FindProperty("ControlPoints"), true, true, false, false);
-        keyPoints.drawHeaderCallback = (Rect rect) =>
+        controlPoints = new ReorderableList(serializedObject, serializedObject.FindProperty("ControlPoints"), true, true, false, false);
+        controlPoints.drawHeaderCallback = (Rect rect) =>
         {
-               EditorGUI.LabelField(rect, string.Format("ControlPoints: {0}", keyPoints.serializedProperty.arraySize), EditorStyles.boldLabel);
+               EditorGUI.LabelField(rect, string.Format("ControlPoints: {0}", controlPoints.serializedProperty.arraySize), EditorStyles.boldLabel);
         };
-        keyPoints.drawElementCallback = DrawControlPointsList;
+        controlPoints.drawElementCallback = DrawControlPointsList;
     }
     void OnDisable()
     {
@@ -25,33 +24,24 @@ public class ControlPointsManagerEditor : Editor
     }
     void OnSceneGUI()
     {
-
-
         var isEditInHeirachy = serializedObject.FindProperty("editInHierachy");
         if (isEditInHeirachy.boolValue) return;
 
-        var controlPointsGOsProp = serializedObject.FindProperty("controlPointsGOs");
+        var pointsSize = serializedObject.FindProperty("pointsSize").floatValue;
         var pointsColor = serializedObject.FindProperty("pointsColor").colorValue;
         Handles.color = pointsColor;
-        for (int i = 0; i < controlPointsGOsProp.arraySize; i++)
+        for (int i = 0; i < controlPoints.count; i++)
         {
-            var controlPointGO = controlPointsGOsProp.GetArrayElementAtIndex(i);
-            var go = controlPointGO?.objectReferenceValue as GameObject;
-            if (go == null) return;
+            var controlPointProp = controlPoints.serializedProperty.GetArrayElementAtIndex(i);
+            var controlPoint = controlPointProp.vector3Value;
 
-            var pos = go.transform.position;
-            var size = HandleUtility.GetHandleSize(pos) * 0.1f;
+            var pos = controlPoint;
+            var size = pointsSize;
 
-            Handles.Label(pos + new Vector3(0f, HandleUtility.GetHandleSize(pos) * 0.4f, 0f), go.name);
-
-            EditorGUI.BeginChangeCheck();
-            var newPos = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.CircleHandleCap);
-            if (EditorGUI.EndChangeCheck())
-            {
-                Undo.RecordObject(go.transform, "Move Object");
-                go.transform.position = newPos;
-            }
+            Handles.Label(pos + new Vector3(0f, HandleUtility.GetHandleSize(pos) * 0.4f, 0f), $"Control Point {i}");
+            controlPointProp.vector3Value = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.CircleHandleCap);
         }
+        controlPoints.serializedProperty.serializedObject.ApplyModifiedProperties();
     }
 
     public override void OnInspectorGUI()
@@ -62,23 +52,12 @@ public class ControlPointsManagerEditor : Editor
 
         if (GUILayout.Button("Add Point"))
         {
-            var controlPointManager = (ControlPointsManager)target;
-            controlPointManager.AddControlPoint();
+            AddControlPoint();
         }
 
-        keyPoints.DoLayoutList();
+        controlPoints.DoLayoutList();
 
         serializedObject.ApplyModifiedProperties();
-    }
-
-    void AddPoint()
-    {
-        AddPointAt(keyPoints.count);
-    }
-    void AddPointAt(int index)
-    {
-        var controlPointManager = (ControlPointsManager)target;
-        controlPointManager.AddControlPoint();
     }
 
     void DrawControlPointsList(Rect rect, int index, bool isActive, bool isFocused)
@@ -86,19 +65,19 @@ public class ControlPointsManagerEditor : Editor
         var AddButtonWidth = 100;
         var RemoveButtonWidth = 100;
 
-        var controlPoint = keyPoints.serializedProperty.GetArrayElementAtIndex(index);
+        var controlPoint = controlPoints.serializedProperty.GetArrayElementAtIndex(index);
         rect.y += 2;
 
         if (GUI.Button(new Rect(rect.x, rect.y, AddButtonWidth, EditorGUIUtility.singleLineHeight), new GUIContent("Add Before")))
         {
-            //AddKeyPointAt(this.curve, index);
+            AddControlPointAt(index);
         }
 
         EditorGUI.PropertyField(new Rect(rect.x + AddButtonWidth + 5f, rect.y, rect.width - AddButtonWidth * 2f - 35f, EditorGUIUtility.singleLineHeight), controlPoint, GUIContent.none);
 
         if (GUI.Button(new Rect(rect.width - AddButtonWidth + 8f, rect.y, AddButtonWidth, EditorGUIUtility.singleLineHeight), new GUIContent("Add After")))
         {
-            //AddKeyPointAt(this.curve, index + 1);
+            AddControlPointAt(index + 1);
         }
 
         //if (this.curve.KeyPointsCount > 2)
@@ -108,6 +87,17 @@ public class ControlPointsManagerEditor : Editor
         //        //RemoveKeyPointAt(this.curve, index);
         //    }
         //}
+    }
+
+    void AddControlPoint()
+    {
+        var controlPointManager = (ControlPointsManager)target;
+        controlPointManager.AddControlPoint();
+    }
+    void AddControlPointAt(int index)
+    {
+        var controlPointManager = (ControlPointsManager)target;
+        controlPointManager.AddControlPoint(index);
     }
 
 }
