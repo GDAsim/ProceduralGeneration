@@ -92,29 +92,32 @@ public class ControlPointsManager : MonoBehaviour
         Vector3 newPoint = Vector3.zero;
         if (ControlPoints.Count == 0)
         {
-
+            newPoint = Vector3.zero;
         }
-
-        if (ControlPoints.Count > 2)
+        else if (ControlPoints.Count == 1)
         {
-            if (index < ControlPoints.Count)
+            if (index <= 0)
             {
-                newPoint = (ControlPoints[index - 1] + ControlPoints[index]) / 2;
+                newPoint = ControlPoints[0] + new Vector3(-0.4f, 0, 0);
             }
-        }
-        else if (index == ControlPoints.Count)
-        {
-            newPoint = ControlPoints[index - 1] + new Vector3(0.4f, 0, 0);
-        }
-        else
-        {
-            if (index == 0)
-            {
-                newPoint = Vector3.zero;
-            }
-            else if (index == 1)
+            else if (index >= 1)
             {
                 newPoint = ControlPoints[0] + new Vector3(0.4f, 0, 0);
+            }
+        }
+        else //if (ControlPoints.Count > 1)
+        {
+            if (index <= 0)
+            {
+                newPoint = ControlPoints[0] + Vector3.Normalize(ControlPoints[0] - ControlPoints[1]) * 0.4f;
+            }
+            else if (index >= ControlPoints.Count)
+            {
+                newPoint = ControlPoints[ControlPoints.Count - 1] + Vector3.Normalize(ControlPoints[ControlPoints.Count - 1] - ControlPoints[ControlPoints.Count - 2]) * 0.4f;
+            }
+            else if (index < ControlPoints.Count)
+            {
+                newPoint = (ControlPoints[index - 1] + ControlPoints[index]) / 2;
             }
         }
 
