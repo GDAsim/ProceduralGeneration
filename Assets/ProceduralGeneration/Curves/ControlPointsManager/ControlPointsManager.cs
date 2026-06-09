@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [ExecuteInEditMode]
 public class ControlPointsManager : MonoBehaviour
@@ -133,11 +135,24 @@ public class ControlPointsManager : MonoBehaviour
     }
     public void RemovePoint()
     {
-
+        int targetIndex = Mathf.Max(0, ControlPoints.Count);
+        RemoveControlPoint(targetIndex);
     }
-    public void RemovePoint(int index)
+    public void RemoveControlPoint(int index)
     {
+        if (index < 0 || index > ControlPoints.Count) return;
 
+        Undo.IncrementCurrentGroup();
+        Undo.RecordObject(this, "Add Control Point");
+        ControlPoints.RemoveAt(index);
+
+        if (controlPointsGOs.Count > index)
+        {
+            DestroyImmediate(controlPointsGOs[index]);
+            controlPointsGOs.RemoveAt(index);
+        }
+
+        SceneView.RepaintAll();
     }
 
     void OnDrawGizmos()

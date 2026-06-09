@@ -63,7 +63,7 @@ public class ControlPointsManagerEditor : Editor
     void DrawControlPointsList(Rect rect, int index, bool isActive, bool isFocused)
     {
         var AddButtonWidth = 100;
-        var RemoveButtonWidth = 100;
+        var RemoveButtonWidth = 25;
 
         var controlPoint = controlPoints.serializedProperty.GetArrayElementAtIndex(index);
         rect.y += 2;
@@ -80,13 +80,10 @@ public class ControlPointsManagerEditor : Editor
             AddControlPointAt(index + 1);
         }
 
-        //if (this.curve.KeyPointsCount > 2)
-        //{
-        //    if (GUI.Button(new Rect(rect.width + 14f, rect.y, RemoveButtonWidth, EditorGUIUtility.singleLineHeight), new GUIContent("x")))
-        //    {
-        //        //RemoveKeyPointAt(this.curve, index);
-        //    }
-        //}
+        if (GUI.Button(new Rect(rect.width + 14f, rect.y, RemoveButtonWidth, EditorGUIUtility.singleLineHeight), new GUIContent("x")))
+        {
+            RemoveControlPointAt(index);
+        }
     }
 
     void AddControlPoint()
@@ -98,6 +95,11 @@ public class ControlPointsManagerEditor : Editor
     {
         var controlPointManager = (ControlPointsManager)target;
         controlPointManager.AddControlPoint(index);
+    }
+    void RemoveControlPointAt(int index)
+    {
+        var controlPointManager = (ControlPointsManager)target;
+        controlPointManager.RemoveControlPoint(index);
     }
 
 }
