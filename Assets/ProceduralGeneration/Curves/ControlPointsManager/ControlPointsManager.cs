@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 [ExecuteInEditMode]
 public class ControlPointsManager : MonoBehaviour
@@ -15,8 +13,11 @@ public class ControlPointsManager : MonoBehaviour
     [SerializeField] Color pointsColor = Color.yellow;
     [SerializeField] Color pathColor = Color.cyan;
 
+
     [Header("Editor Settings")]
     [SerializeField] bool editInHierachy = true;
+    [SerializeField] Color controlPointTextColor = Color.cyan;
+    [SerializeField] Color lengthTextColor = Color.cyan;
     [SerializeField, HideInInspector] List<GameObject> controlPointsGOs = new();
 
     void Update()
