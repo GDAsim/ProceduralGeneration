@@ -134,10 +134,10 @@ public class ControlPointsManager : MonoBehaviour
         controlPointsGOs.Add(newGO);
         Undo.RegisterCreatedObjectUndo(newGO, "Save Curve");
     }
-    public void RemovePoint()
+    public void RemoveControlPoint()
     {
         int targetIndex = Mathf.Max(0, ControlPoints.Count);
-        RemoveControlPoint(targetIndex);
+        RemoveControlPoint(targetIndex - 1);
     }
     public void RemoveControlPoint(int index)
     {

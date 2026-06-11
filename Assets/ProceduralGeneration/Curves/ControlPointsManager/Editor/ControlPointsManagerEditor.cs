@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -101,6 +102,14 @@ public class ControlPointsManagerEditor : Editor
             AddControlPoint();
         }
 
+        if (controlPoints.count > 0)
+        {
+            if (GUILayout.Button("Remove Point"))
+            {
+                RemoveControlPoint();
+            }
+        }
+
         controlPoints.DoLayoutList();
 
         serializedObject.ApplyModifiedProperties();
@@ -142,10 +151,14 @@ public class ControlPointsManagerEditor : Editor
         var controlPointManager = (ControlPointsManager)target;
         controlPointManager.AddControlPoint(index);
     }
+    void RemoveControlPoint()
+    {
+        var controlPointManager = (ControlPointsManager)target;
+        controlPointManager.RemoveControlPoint();
+    }
     void RemoveControlPointAt(int index)
     {
         var controlPointManager = (ControlPointsManager)target;
         controlPointManager.RemoveControlPoint(index);
     }
-
 }
