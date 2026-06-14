@@ -11,9 +11,8 @@ public class BSplinePoint : MonoBehaviour
     }
 
     [SerializeField] HandleType handleType = HandleType.Mirror;
-
-    Vector3 leftControlPos;
-    Vector3 rightControlPos;
+    [SerializeField, HideInInspector] Vector3 leftControlLocalPos = new(-1, 0, 0);
+    [SerializeField, HideInInspector] Vector3 rightControlLocalPos = new(1, 0, 0);
 
     public Vector3 Position
     {
@@ -26,35 +25,35 @@ public class BSplinePoint : MonoBehaviour
             this.transform.position = value;
         }
     }
-    public Vector3 LeftControlPosition
+    Vector3 LeftControlLocalPosition
     {
         get
         {
-            return leftControlPos;
+            return leftControlLocalPos;
         }
         set
         {
-            leftControlPos = value;
+            leftControlLocalPos = value;
 
             if (this.handleType == HandleType.Mirror)
             {
-                rightControlPos = -value;
+                rightControlLocalPos = -value;
             }
         }
     }
-    public Vector3 RightControlPosition
+    Vector3 RightControlLocalPosition
     {
         get
         {
-            return rightControlPos;
+            return rightControlLocalPos;
         }
         set
         {
-            rightControlPos = value;
+            rightControlLocalPos = value;
 
             if (this.handleType == HandleType.Mirror)
             {
-                leftControlPos = -value;
+                leftControlLocalPos = -value;
             }
         }
     }
@@ -62,22 +61,22 @@ public class BSplinePoint : MonoBehaviour
     {
         get
         {
-            return transform.TransformPoint(LeftControlPosition);
+            return transform.TransformPoint(LeftControlLocalPosition);
         }
         set
         {
-            LeftControlPosition = transform.InverseTransformPoint(value);
+            LeftControlLocalPosition = transform.InverseTransformPoint(value);
         }
     }
     public Vector3 RightPos
     {
         get
         {
-            return transform.TransformPoint(RightControlPosition);
+            return transform.TransformPoint(RightControlLocalPosition);
         }
         set
         {
-            RightControlPosition = transform.InverseTransformPoint(value);
+            RightControlLocalPosition = transform.InverseTransformPoint(value);
         }
     }
 }

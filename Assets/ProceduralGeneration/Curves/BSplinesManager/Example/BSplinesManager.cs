@@ -8,10 +8,10 @@ public class BSplinesManager : MonoBehaviour
     void OnDrawGizmos()
     {
         // Draw Points
-        for (int i = 0; BSplinePoints.Count > i; i++)
-        {
-            var bSplinePoint = BSplinePoints[i];
-            Gizmos.DrawSphere(bSplinePoint.Position, 0.2f);
-        }
+        //for (int i = 0; BSplinePoints.Count > i; i++)
+        //{
+        //    var bSplinePoint = BSplinePoints[i];
+        //    Gizmos.DrawSphere(bSplinePoint.Position, 0.2f);
+        //}
     }
 }
