@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BSplinePoint : MonoBehaviour
+public class BSplinePoint
 {
     public enum HandleType
     {
@@ -10,28 +10,38 @@ public class BSplinePoint : MonoBehaviour
         Free
     }
 
-    [SerializeField] HandleType handleType = HandleType.Mirror;
-    [SerializeField, HideInInspector] Vector3 leftControlLocalPos = new(-1, 0, 0);
-    [SerializeField, HideInInspector] Vector3 rightControlLocalPos = new(1, 0, 0);
+    public BSplinePoint(HandleType handleType, Vector3 position,
+        Vector3 leftControlLocalPos, Vector3 rightControlLocalPos)
+    {
+        this.handleType = handleType;
+        this.position = position;
+        this.leftControlLocalPos = leftControlLocalPos;
+        this.rightControlLocalPos = rightControlLocalPos;
+    }
+
+    HandleType handleType;
+    Vector3 position;
+    Vector3 leftControlLocalPos;
+    Vector3 rightControlLocalPos;
 
     public Vector3 Position
     {
         get
         {
-            return this.transform.position;
+            return position;
         }
         set
         {
-            this.transform.position = value;
+            position = value;
         }
     }
-    Vector3 LeftControlLocalPosition
+    public Vector3 LeftControlLocalPosition
     {
         get
         {
             return leftControlLocalPos;
         }
-        set
+        private set
         {
             leftControlLocalPos = value;
 
@@ -41,13 +51,13 @@ public class BSplinePoint : MonoBehaviour
             }
         }
     }
-    Vector3 RightControlLocalPosition
+    public Vector3 RightControlLocalPosition
     {
         get
         {
             return rightControlLocalPos;
         }
-        set
+        private set
         {
             rightControlLocalPos = value;
 
@@ -61,22 +71,22 @@ public class BSplinePoint : MonoBehaviour
     {
         get
         {
-            return transform.TransformPoint(LeftControlLocalPosition);
+            return position + LeftControlLocalPosition;
         }
         set
         {
-            LeftControlLocalPosition = transform.InverseTransformPoint(value);
+            LeftControlLocalPosition = value - position;
         }
     }
     public Vector3 RightPos
     {
         get
         {
-            return transform.TransformPoint(RightControlLocalPosition);
+            return position + RightControlLocalPosition;
         }
         set
         {
-            RightControlLocalPosition = transform.InverseTransformPoint(value);
+            RightControlLocalPosition = value - position;
         }
     }
 }
