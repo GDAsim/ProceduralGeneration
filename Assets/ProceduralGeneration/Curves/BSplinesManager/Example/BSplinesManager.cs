@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BSplinesManager : MonoBehaviour
 {
-    public List<BSplinePoint> BSplinePoints = new();
+    [HideInInspector] public BSpline bSpline = new();
 
     void OnDrawGizmos()
     {

@@ -1,9 +1,10 @@
+using Codice.CM.Client.Differences;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(BSplinePoint), true)]
+[CustomEditor(typeof(BSplinesManager), true)]
 [CanEditMultipleObjects]
-public class BSplinePointEditor : Editor
+public class BSplinesManagerEditor : Editor
 {
     //// Settings
     //static float CenterCapSize = 0.15f;
@@ -13,14 +14,42 @@ public class BSplinePointEditor : Editor
     //static Color ControlCapColor = Color.yellow;
     //static Color LineColor = Color.white;
 
-    //void OnEnable()
-    //{
-    //    Tools.hidden = true;
-    //}
-    //void OnDisable()
-    //{
-    //    Tools.hidden = false;
-    //}
+    BSplinesManager bSplinesManager;
+
+    void OnEnable()
+    {
+        Tools.hidden = true;
+
+        bSplinesManager = (BSplinesManager) target;
+    }
+    void OnDisable()
+    {
+        Tools.hidden = false;
+    }
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+
+        serializedObject.Update();
+
+        var bSpline = bSplinesManager.bSpline;
+        var bSplinePoints = bSpline.bSplinePoints;
+
+        if (GUILayout.Button("Add Point"))
+        {
+            bSpline.AddPoint(0);
+        }
+        if (bSplinePoints.Count > 0)
+        {
+            if (GUILayout.Button("Remove Point"))
+            {
+                bSpline.RemovePoint(0);
+            }
+        }
+
+        serializedObject.ApplyModifiedProperties();
+    }
+
     //protected virtual void OnSceneGUI()
     //{
     //    var bSplinePoint = (BSplinePoint) target;

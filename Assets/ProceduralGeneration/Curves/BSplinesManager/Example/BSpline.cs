@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using static BSplinePoint;
 
+[Serializable]
 public class BSpline
 {
-    List<BSplinePoint> bSplinePoints = new();
+    public List<BSplinePoint> bSplinePoints { get; } = new();
 
     public BSplinePoint AddPoint(int index)
     {
