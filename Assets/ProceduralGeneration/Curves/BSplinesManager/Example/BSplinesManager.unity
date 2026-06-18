@@ -163,6 +163,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e90165aa8dbff1946897e9d8d8ba5dd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BSplinesManager
+  bSpline:
+    BSplinePoints:
+    - position: {x: 0, y: 0, z: 0}
+    - position: {x: 0.9342078, y: 2.8042874, z: 0}
+    - position: {x: 4.1238236, y: 1.037886, z: 0}
+  showGizmoPath: 1
+  pointsSize: 0.1
+  pointsColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  pathColor: {r: 0, g: 1, b: 1, a: 1}
+  editInHierachy: 1
+  bSplinePointTextColor: {r: 0, g: 1, b: 1, a: 1}
+  lengthTextColor: {r: 0, g: 1, b: 1, a: 1}
+  bSplinePointsGOs: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

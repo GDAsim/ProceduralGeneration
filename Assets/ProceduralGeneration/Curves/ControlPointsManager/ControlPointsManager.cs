@@ -86,8 +86,7 @@ public class ControlPointsManager : MonoBehaviour
 
     public void AddControlPoint()
     {
-        int targetIndex = Mathf.Max(0, ControlPoints.Count);
-        AddControlPoint(targetIndex);
+        AddControlPoint(ControlPoints.Count);
     }
     public void AddControlPoint(int index)
     {
@@ -123,8 +122,7 @@ public class ControlPointsManager : MonoBehaviour
     }
     public void RemoveControlPoint()
     {
-        int targetIndex = Mathf.Max(0, ControlPoints.Count);
-        RemoveControlPoint(targetIndex - 1);
+        RemoveControlPoint(ControlPoints.Count - 1);
     }
     public void RemoveControlPoint(int index)
     {

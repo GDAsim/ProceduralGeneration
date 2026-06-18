@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class BSplinePoint
 {
     public enum HandleType
@@ -20,7 +22,7 @@ public class BSplinePoint
     }
 
     HandleType handleType;
-    Vector3 position;
+    [SerializeField] Vector3 position;
     Vector3 leftControlLocalPos;
     Vector3 rightControlLocalPos;
 

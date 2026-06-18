@@ -8,6 +8,8 @@ public class ControlPointsManagerEditor : Editor
 {
     ReorderableList controlPoints;
 
+    ControlPointsManager controlPointsManager;
+
     const float PIXELTOWORLDSCALE = 80;
 
     GUIStyle style;
@@ -15,6 +17,8 @@ public class ControlPointsManagerEditor : Editor
     void OnEnable()
     {
         Tools.hidden = true;
+
+        controlPointsManager = (ControlPointsManager)target;
 
         controlPoints = new ReorderableList(serializedObject, serializedObject.FindProperty("ControlPoints"), true, true, false, false);
         controlPoints.drawHeaderCallback = (Rect rect) =>
@@ -115,9 +119,9 @@ public class ControlPointsManagerEditor : Editor
             }
         }
 
-        controlPoints.DoLayoutList();
-
         serializedObject.ApplyModifiedProperties();
+
+        controlPoints.DoLayoutList();
     }
 
     void DrawControlPointsList(Rect rect, int index, bool isActive, bool isFocused)
@@ -148,22 +152,18 @@ public class ControlPointsManagerEditor : Editor
 
     void AddControlPoint()
     {
-        var controlPointManager = (ControlPointsManager)target;
-        controlPointManager.AddControlPoint();
+        controlPointsManager.AddControlPoint();
     }
     void AddControlPointAt(int index)
     {
-        var controlPointManager = (ControlPointsManager)target;
-        controlPointManager.AddControlPoint(index);
+        controlPointsManager.AddControlPoint(index);
     }
     void RemoveControlPoint()
     {
-        var controlPointManager = (ControlPointsManager)target;
-        controlPointManager.RemoveControlPoint();
+        controlPointsManager.RemoveControlPoint();
     }
     void RemoveControlPointAt(int index)
     {
-        var controlPointManager = (ControlPointsManager)target;
-        controlPointManager.RemoveControlPoint(index);
+        controlPointsManager.RemoveControlPoint(index);
     }
 }

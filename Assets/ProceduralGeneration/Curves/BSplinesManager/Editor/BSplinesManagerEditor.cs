@@ -1,26 +1,34 @@
-using Codice.CM.Client.Differences;
+using System;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
-[CustomEditor(typeof(BSplinesManager), true)]
-[CanEditMultipleObjects]
+[CustomEditor(typeof(BSplinesManager), false)]
 public class BSplinesManagerEditor : Editor
 {
-    //// Settings
-    //static float CenterCapSize = 0.15f;
-    //static float ControlCapSize = 0.15f;
-    //static Color LabelColor = Color.white;
-    //static Color CenterCapColor = Color.red;
-    //static Color ControlCapColor = Color.yellow;
-    //static Color LineColor = Color.white;
+    ReorderableList bSplinePoints;
 
     BSplinesManager bSplinesManager;
+
+    const float PIXELTOWORLDSCALE = 80;
+
+    GUIStyle style;
 
     void OnEnable()
     {
         Tools.hidden = true;
 
-        bSplinesManager = (BSplinesManager) target;
+        bSplinesManager = (BSplinesManager)target;
+
+        bSplinePoints = new ReorderableList(serializedObject, serializedObject.FindProperty("bSpline.BSplinePoints"), true, true, false, false);
+
+        bSplinePoints.drawHeaderCallback = (Rect rect) =>
+        {
+            EditorGUI.LabelField(rect, string.Format("ControlPoints: {0}", bSplinePoints.count), EditorStyles.boldLabel);
+        };
+        bSplinePoints.drawElementCallback = DrawControlPointsList;
+
+        style = new GUIStyle();
     }
     void OnDisable()
     {
@@ -33,72 +41,129 @@ public class BSplinesManagerEditor : Editor
         serializedObject.Update();
 
         var bSpline = bSplinesManager.bSpline;
-        var bSplinePoints = bSpline.bSplinePoints;
 
         if (GUILayout.Button("Add Point"))
         {
-            bSpline.AddPoint(0);
+            AddPoint();
         }
-        if (bSplinePoints.Count > 0)
+        if (bSplinePoints.count > 0)
         {
             if (GUILayout.Button("Remove Point"))
             {
-                bSpline.RemovePoint(0);
+                RemovePoint();
             }
         }
+
+        bSplinePoints.DoLayoutList();
 
         serializedObject.ApplyModifiedProperties();
     }
 
-    //protected virtual void OnSceneGUI()
-    //{
-    //    var bSplinePoint = (BSplinePoint) target;
+    void OnSceneGUI()
+    {
+        var pointsSize = serializedObject.FindProperty("pointsSize").floatValue;
+        var pointsColor = serializedObject.FindProperty("pointsColor").colorValue;
 
-    //    // Label
-    //    Handles.color = LabelColor;
-    //    Handles.Label(bSplinePoint.Position + new Vector3(0f, HandleUtility.GetHandleSize(bSplinePoint.Position) * 0.4f, 0f), bSplinePoint.gameObject.name);
+        Handles.color = pointsColor;
+        style.normal.textColor = serializedObject.FindProperty("bSplinePointTextColor").colorValue;
+        for (int i = 0; i < bSplinePoints.count; i++)
+        {
+            var controlPointProp = bSplinePoints.serializedProperty.GetArrayElementAtIndex(i);
+            var controlPointPosProp = controlPointProp.FindPropertyRelative("position");
 
-    //    // Center
-    //    Handles.color = CenterCapColor;
-    //    var capsize = CenterCapSize;
-    //    var pos = bSplinePoint.Position;
-    //    var size = HandleUtility.GetHandleSize(bSplinePoint.Position) * capsize;
-    //    var newPointPosition = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.RectangleHandleCap);
+            var pos = controlPointPosProp.vector3Value;
+            var size = pointsSize;
 
-    //    if (bSplinePoint.Position != newPointPosition)
-    //    {
-    //        Undo.RegisterCompleteObjectUndo(bSplinePoint.transform, "Move Point");
-    //        bSplinePoint.Position = newPointPosition;
-    //    }
+            var content = new GUIContent($"BSpline Point {i}");
+            var contentSize = GUI.skin.label.CalcSize(content);
+            var pixelsToWorld = HandleUtility.GetHandleSize(pos) / PIXELTOWORLDSCALE;
+            var worldWidth = contentSize.x * pixelsToWorld;
+            Handles.Label(pos - new Vector3(worldWidth * 0.5f, HandleUtility.GetHandleSize(pos) * 0.2f, 0), content.text, style);
 
-    //    // Left
-    //    Handles.color = LineColor;
-    //    Handles.DrawLine(bSplinePoint.Position, bSplinePoint.LeftPos);
+            controlPointPosProp.vector3Value = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.RectangleHandleCap);
+        }
 
-    //    Handles.color = ControlCapColor;
-    //    capsize = ControlCapSize;
-    //    pos = bSplinePoint.LeftPos;
-    //    size = HandleUtility.GetHandleSize(bSplinePoint.LeftPos) * capsize;
-    //    var newLeftPos = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.CircleHandleCap);
-    //    if (bSplinePoint.LeftPos != newLeftPos)
-    //    {
-    //        Undo.RegisterCompleteObjectUndo(bSplinePoint, "Move Left Handle");
-    //        bSplinePoint.LeftPos = newLeftPos;
-    //    }
+        // Label
+        //Handles.color = LabelColor;
+        //Handles.Label(controlPoint.Position + new Vector3(0f, HandleUtility.GetHandleSize(bSplinePoint.Position) * 0.4f, 0f), bSplinePoint.gameObject.name);
 
-    //    // Right
-    //    Handles.color = LineColor;
-    //    Handles.DrawLine(bSplinePoint.Position, bSplinePoint.RightPos);
+        // Center
 
-    //    Handles.color = ControlCapColor;
-    //    capsize = ControlCapSize;
-    //    pos = bSplinePoint.RightPos;
-    //    size = HandleUtility.GetHandleSize(bSplinePoint.RightPos) * capsize;
-    //    var newRightPos = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.CircleHandleCap);
-    //    if (bSplinePoint.RightPos != newRightPos)
-    //    {
-    //        Undo.RegisterCompleteObjectUndo(bSplinePoint, "Move Right Handle");
-    //        bSplinePoint.RightPos = newRightPos;
-    //    }
-    //}
+
+        //// Left
+        //Handles.color = LineColor;
+        //Handles.DrawLine(bSplinePoint.Position, bSplinePoint.LeftPos);
+
+        //Handles.color = ControlCapColor;
+        //capsize = ControlCapSize;
+        //pos = bSplinePoint.LeftPos;
+        //size = HandleUtility.GetHandleSize(bSplinePoint.LeftPos) * capsize;
+        //var newLeftPos = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.CircleHandleCap);
+        //if (bSplinePoint.LeftPos != newLeftPos)
+        //{
+        //    Undo.RegisterCompleteObjectUndo(bSplinePoint, "Move Left Handle");
+        //    bSplinePoint.LeftPos = newLeftPos;
+        //}
+
+        //// Right
+        //Handles.color = LineColor;
+        //Handles.DrawLine(bSplinePoint.Position, bSplinePoint.RightPos);
+
+        //Handles.color = ControlCapColor;
+        //capsize = ControlCapSize;
+        //pos = bSplinePoint.RightPos;
+        //size = HandleUtility.GetHandleSize(bSplinePoint.RightPos) * capsize;
+        //var newRightPos = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.CircleHandleCap);
+        //if (bSplinePoint.RightPos != newRightPos)
+        //{
+        //    Undo.RegisterCompleteObjectUndo(bSplinePoint, "Move Right Handle");
+        //    bSplinePoint.RightPos = newRightPos;
+        //}
+
+
+        bSplinePoints.serializedProperty.serializedObject.ApplyModifiedProperties();
+    }
+
+    void DrawControlPointsList(Rect rect, int index, bool isActive, bool isFocused)
+    {
+        var AddButtonWidth = 100;
+        var RemoveButtonWidth = 25;
+
+        var controlPoint = bSplinePoints.serializedProperty.GetArrayElementAtIndex(index);
+        rect.y += 2;
+
+        if (GUI.Button(new Rect(rect.x, rect.y, AddButtonWidth, EditorGUIUtility.singleLineHeight), new GUIContent("Add Before")))
+        {
+            AddPointAt(index);
+        }
+
+        EditorGUI.PropertyField(new Rect(rect.x + AddButtonWidth + 5f, rect.y, rect.width - AddButtonWidth * 2f - 35f, EditorGUIUtility.singleLineHeight), controlPoint.FindPropertyRelative("position"), GUIContent.none);
+
+        if (GUI.Button(new Rect(rect.width - AddButtonWidth + 8f, rect.y, AddButtonWidth, EditorGUIUtility.singleLineHeight), new GUIContent("Add After")))
+        {
+            AddPointAt(index + 1);
+        }
+
+        if (GUI.Button(new Rect(rect.width + 14f, rect.y, RemoveButtonWidth, EditorGUIUtility.singleLineHeight), new GUIContent("x")))
+        {
+            RemovePointAt(index);
+        }
+    }
+
+    void AddPoint()
+    {
+        bSplinesManager.AddPoint();
+    }
+    void AddPointAt(int index)
+    {
+        bSplinesManager.AddPoint(index);
+    }
+    void RemovePoint()
+    {
+        bSplinesManager.RemovePoint();
+    }
+    void RemovePointAt(int index)
+    {
+        bSplinesManager.RemovePoint(index);
+    }
 }

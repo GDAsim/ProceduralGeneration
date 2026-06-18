@@ -1,8 +1,30 @@
+using System.Collections.Generic;
 using UnityEngine;
+using static BSplinePoint;
 
 public class BSplinesManager : MonoBehaviour
 {
     [HideInInspector] public BSpline bSpline = new();
+
+    //// Settings
+    //static float CenterCapSize = 0.15f;
+    //static float ControlCapSize = 0.15f;
+    //static Color LabelColor = Color.white;
+    //static Color CenterCapColor = Color.red;
+    //static Color ControlCapColor = Color.yellow;
+    //static Color LineColor = Color.white;
+
+    [Header("Gizmo Settings")]  
+    public bool showGizmoPath = true;
+    public float pointsSize = 0.1f;
+    public Color pointsColor = Color.yellow;
+    public Color pathColor = Color.cyan;
+
+    [Header("Editor Settings")]
+    [SerializeField] bool editInHierachy = true;
+    [SerializeField] Color bSplinePointTextColor = Color.cyan;
+    [SerializeField] Color lengthTextColor = Color.cyan;
+    [SerializeField, HideInInspector] List<GameObject> bSplinePointsGOs = new();
 
     void OnDrawGizmos()
     {
@@ -12,5 +34,22 @@ public class BSplinesManager : MonoBehaviour
         //    var bSplinePoint = BSplinePoints[i];
         //    Gizmos.DrawSphere(bSplinePoint.Position, 0.2f);
         //}
+    }
+
+    public void AddPoint()
+    {
+        bSpline.AddPoint();
+    }
+    public void AddPoint(int index)
+    {
+        bSpline.AddPoint(index);
+    }
+    public void RemovePoint()
+    {
+        bSpline.RemovePoint();
+    }
+    public void RemovePoint(int index)
+    {
+        bSpline.RemovePoint(index);
     }
 }

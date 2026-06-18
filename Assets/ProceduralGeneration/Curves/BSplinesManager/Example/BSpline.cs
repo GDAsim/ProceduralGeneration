@@ -6,35 +6,53 @@ using static BSplinePoint;
 [Serializable]
 public class BSpline
 {
-    public List<BSplinePoint> bSplinePoints { get; } = new();
+    [SerializeField] public List<BSplinePoint> BSplinePoints = new();
 
+    public BSplinePoint AddPoint()
+    {
+        return AddPoint(BSplinePoints.Count);
+    }
     public BSplinePoint AddPoint(int index)
     {
-        if (index < 0 || index > bSplinePoints.Count) throw new ArgumentOutOfRangeException(nameof(index));
+        if (index < 0 || index > BSplinePoints.Count) throw new ArgumentOutOfRangeException(nameof(index));
 
         BSplinePoint newPoint;
 
-        if (bSplinePoints.Count == 0)
+        if (BSplinePoints.Count == 0)
         {
             newPoint = new BSplinePoint(HandleType.Aligned, Vector3.zero,
                 new Vector3(-1, 0, 0), new Vector3(1, 0, 0));
         }
         else if (index == 0)
         {
-            newPoint = CreateEndPoint(bSplinePoints[0], -1f);
+            newPoint = CreateEndPoint(BSplinePoints[0], -1f);
         }
-        else if (index == bSplinePoints.Count)
+        else if (index == BSplinePoints.Count)
         {
-            newPoint = CreateEndPoint(bSplinePoints[^1], 1f);
+            newPoint = CreateEndPoint(BSplinePoints[^1], 1f);
         }
         else
         {
-            newPoint = SplitSegment(bSplinePoints[index - 1], bSplinePoints[index]);
+            newPoint = SplitSegment(BSplinePoints[index - 1], BSplinePoints[index]);
         }
 
-        bSplinePoints.Insert(index, newPoint);
+        BSplinePoints.Insert(index, newPoint);
 
         return newPoint;
+    }
+    public BSplinePoint RemovePoint()
+    {
+        return RemovePoint(BSplinePoints.Count - 1);
+    }
+    public BSplinePoint RemovePoint(int index)
+    {
+        if (index < 0 || index > BSplinePoints.Count) return null;
+
+        var removed = BSplinePoints[index];
+
+        BSplinePoints.RemoveAt(index);
+
+        return removed;
     }
 
     // New end point placed one step beyond the current end, in the end's tangent direction
@@ -71,14 +89,5 @@ public class BSpline
         return new BSplinePoint(HandleType.Aligned, s, r0 - s, r1 - s);
     }
 
-    public void RemovePoint(int index)
-    {
-        //if (index < 0 || index >= bSplinePoints.Count)
-        //    return false;
-        //if (bSplinePoints.Count <= MinPoints)
-        //    return false; // keep at least a valid curve
 
-        //bSplinePoints.RemoveAt(index);
-        //return true;
-    }
 }
