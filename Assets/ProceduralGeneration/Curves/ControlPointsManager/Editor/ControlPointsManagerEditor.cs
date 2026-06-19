@@ -108,14 +108,14 @@ public class ControlPointsManagerEditor : Editor
 
         if (GUILayout.Button("Add Point"))
         {
-            AddControlPoint();
+            AddControlPointAt(controlPoints.count);
         }
 
         if (controlPoints.count > 0)
         {
             if (GUILayout.Button("Remove Point"))
             {
-                RemoveControlPoint();
+                RemoveControlPointAt(controlPoints.count - 1);
             }
         }
 
@@ -150,20 +150,20 @@ public class ControlPointsManagerEditor : Editor
         }
     }
 
-    void AddControlPoint()
-    {
-        controlPointsManager.AddControlPoint();
-    }
     void AddControlPointAt(int index)
     {
-        controlPointsManager.AddControlPoint(index);
-    }
-    void RemoveControlPoint()
-    {
-        controlPointsManager.RemoveControlPoint();
+        Undo.IncrementCurrentGroup();
+        Undo.RecordObject(target, "Add Control Point");
+        controlPointsManager.AddControlPointAt(index);
+
+        SceneView.RepaintAll();
     }
     void RemoveControlPointAt(int index)
     {
-        controlPointsManager.RemoveControlPoint(index);
+        Undo.IncrementCurrentGroup();
+        Undo.RecordObject(target, "Remove Control Point");
+        controlPointsManager.RemoveControlPointAt(index);
+
+        SceneView.RepaintAll();
     }
 }

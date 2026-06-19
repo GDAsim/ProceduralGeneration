@@ -38,17 +38,17 @@ public class BSplinesManager : MonoBehaviour
 
     public void AddPoint()
     {
-        bSpline.AddPoint();
+        bSpline.AddPoint(bSpline.BSplinePoints.Count);
     }
-    public void AddPoint(int index)
+    public void AddPointAt(int index)
     {
         bSpline.AddPoint(index);
     }
     public void RemovePoint()
     {
-        bSpline.RemovePoint();
+        bSpline.AddPoint(bSpline.BSplinePoints.Count - 1);
     }
-    public void RemovePoint(int index)
+    public void RemovePointAt(int index)
     {
         bSpline.RemovePoint(index);
     }

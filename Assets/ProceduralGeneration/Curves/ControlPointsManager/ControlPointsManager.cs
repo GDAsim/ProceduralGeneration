@@ -86,9 +86,9 @@ public class ControlPointsManager : MonoBehaviour
 
     public void AddControlPoint()
     {
-        AddControlPoint(ControlPoints.Count);
+        AddControlPointAt(ControlPoints.Count);
     }
-    public void AddControlPoint(int index)
+    public void AddControlPointAt(int index)
     {
         if (index < 0 || index > ControlPoints.Count) throw new ArgumentOutOfRangeException(nameof(index));
 
@@ -122,14 +122,14 @@ public class ControlPointsManager : MonoBehaviour
     }
     public void RemoveControlPoint()
     {
-        RemoveControlPoint(ControlPoints.Count - 1);
+        RemoveControlPointAt(ControlPoints.Count - 1);
     }
-    public void RemoveControlPoint(int index)
+    public void RemoveControlPointAt(int index)
     {
         if (index < 0 || index > ControlPoints.Count) return;
 
         Undo.IncrementCurrentGroup();
-        Undo.RecordObject(this, "Add Control Point");
+        Undo.RecordObject(this, "Remove Control Point");
         ControlPoints.RemoveAt(index);
 
         if (controlPointsGOs.Count > index)

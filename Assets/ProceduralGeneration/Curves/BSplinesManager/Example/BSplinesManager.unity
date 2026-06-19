@@ -166,8 +166,11 @@ MonoBehaviour:
   bSpline:
     BSplinePoints:
     - position: {x: 0, y: 0, z: 0}
-    - position: {x: 0.9342078, y: 2.8042874, z: 0}
-    - position: {x: 4.1238236, y: 1.037886, z: 0}
+    - position: {x: 0.90653515, y: -2.6040647, z: 0}
+    - position: {x: 3.515075, y: 2.5530052, z: 0}
+    - position: {x: 4.1959305, y: 1.5530783, z: 0}
+    - position: {x: 4.7938137, y: -0.64676106, z: 0}
+    - position: {x: 6.0725527, y: -3.8465273, z: 0}
   showGizmoPath: 1
   pointsSize: 0.1
   pointsColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
