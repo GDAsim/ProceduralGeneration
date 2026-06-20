@@ -13,6 +13,14 @@ public class BSplinesManagerEditor : Editor
 
     GUIStyle style;
 
+    //// Settings
+    static float CenterCapSize = 0.15f;
+    static float ControlCapSize = 0.15f;
+    static Color LabelColor = Color.white;
+    static Color CenterCapColor = Color.red;
+    static Color ControlCapColor = Color.yellow;
+    static Color LineColor = Color.white;
+
     void OnEnable()
     {
         Tools.hidden = true;
@@ -53,9 +61,6 @@ public class BSplinesManagerEditor : Editor
 
         bSplinePoints.DoLayoutList();
 
-        serializedObject.FindProperty("bSpline.BSplinePoints").serializedObject.ApplyModifiedProperties();
-        serializedObject.FindProperty("bSpline").serializedObject.ApplyModifiedProperties();
-
         serializedObject.ApplyModifiedProperties();
     }
 
@@ -66,12 +71,11 @@ public class BSplinesManagerEditor : Editor
 
         Handles.color = pointsColor;
         style.normal.textColor = serializedObject.FindProperty("bSplinePointTextColor").colorValue;
-        for (int i = 0; i < bSplinePoints.count; i++)
+        for (int i = 0; i < bSplinesManager.bSpline.BSplinePoints.Count; i++)
         {
-            var controlPointProp = bSplinePoints.serializedProperty.GetArrayElementAtIndex(i);
-            var controlPointPosProp = controlPointProp.FindPropertyRelative("position");
+            var bp = bSplinesManager.bSpline.BSplinePoints[i];
 
-            var pos = controlPointPosProp.vector3Value;
+            var pos = bp.Position;
             var size = pointsSize;
 
             var content = new GUIContent($"BSpline Point {i}");
@@ -82,37 +86,42 @@ public class BSplinesManagerEditor : Editor
             Handles.Label(pos - new Vector3(worldWidth * 0.5f, HandleUtility.GetHandleSize(pos) * 0.2f, 0), content.text, style);
 
             // Center
-            controlPointPosProp.vector3Value = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.RectangleHandleCap);
+            var newPos = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.RectangleHandleCap);
+            if (bp.Position != newPos)
+            {
+                Undo.RegisterCompleteObjectUndo(target, "Move");
+                bp.Position = newPos;
+            }
 
-            //// Left
-            //Handles.color = LineColor;
-            //Handles.DrawLine(bSplinePoint.Position, bSplinePoint.LeftPos);
+            //Left
+            Handles.color = LineColor;
+            Handles.DrawLine(bp.Position, bp.LeftPos);
 
-            //Handles.color = ControlCapColor;
-            //capsize = ControlCapSize;
-            //pos = bSplinePoint.LeftPos;
-            //size = HandleUtility.GetHandleSize(bSplinePoint.LeftPos) * capsize;
-            //var newLeftPos = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.CircleHandleCap);
-            //if (bSplinePoint.LeftPos != newLeftPos)
-            //{
-            //    Undo.RegisterCompleteObjectUndo(bSplinePoint, "Move Left Handle");
-            //    bSplinePoint.LeftPos = newLeftPos;
-            //}
+            Handles.color = ControlCapColor;
+            var capsize = ControlCapSize;
+            pos = bp.LeftPos;
+            size = HandleUtility.GetHandleSize(bp.LeftPos) * capsize;
+            var newLeftPos = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.CircleHandleCap);
+            if (bp.LeftPos != newLeftPos)
+            {
+                Undo.RegisterCompleteObjectUndo(target, "Move Left Handle");
+                bp.LeftPos = newLeftPos;
+            }
 
-            //// Right
-            //Handles.color = LineColor;
-            //Handles.DrawLine(bSplinePoint.Position, bSplinePoint.RightPos);
+            // Right
+            Handles.color = LineColor;
+            Handles.DrawLine(bp.Position, bp.RightPos);
 
-            //Handles.color = ControlCapColor;
-            //capsize = ControlCapSize;
-            //pos = bSplinePoint.RightPos;
-            //size = HandleUtility.GetHandleSize(bSplinePoint.RightPos) * capsize;
-            //var newRightPos = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.CircleHandleCap);
-            //if (bSplinePoint.RightPos != newRightPos)
-            //{
-            //    Undo.RegisterCompleteObjectUndo(bSplinePoint, "Move Right Handle");
-            //    bSplinePoint.RightPos = newRightPos;
-            //}
+            Handles.color = ControlCapColor;
+            capsize = ControlCapSize;
+            pos = bp.RightPos;
+            size = HandleUtility.GetHandleSize(bp.RightPos) * capsize;
+            var newRightPos = Handles.FreeMoveHandle(pos, size, Vector3.zero, Handles.CircleHandleCap);
+            if (bp.RightPos != newRightPos)
+            {
+                Undo.RegisterCompleteObjectUndo(target, "Move Right Handle");
+                bp.RightPos = newRightPos;
+            }
         }
 
         bSplinePoints.serializedProperty.serializedObject.ApplyModifiedProperties();

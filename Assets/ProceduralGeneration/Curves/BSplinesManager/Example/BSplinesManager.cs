@@ -6,14 +6,6 @@ public class BSplinesManager : MonoBehaviour
 {
     [HideInInspector] public BSpline bSpline = new();
 
-    //// Settings
-    //static float CenterCapSize = 0.15f;
-    //static float ControlCapSize = 0.15f;
-    //static Color LabelColor = Color.white;
-    //static Color CenterCapColor = Color.red;
-    //static Color ControlCapColor = Color.yellow;
-    //static Color LineColor = Color.white;
-
     [Header("Gizmo Settings")]  
     public bool showGizmoPath = true;
     public float pointsSize = 0.1f;

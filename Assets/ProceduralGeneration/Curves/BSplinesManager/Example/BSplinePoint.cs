@@ -23,8 +23,8 @@ public class BSplinePoint
 
     HandleType handleType;
     [SerializeField] Vector3 position;
-    Vector3 leftControlLocalPos;
-    Vector3 rightControlLocalPos;
+    [SerializeField] Vector3 leftControlLocalPos;
+    [SerializeField] Vector3 rightControlLocalPos;
 
     public Vector3 Position
     {
