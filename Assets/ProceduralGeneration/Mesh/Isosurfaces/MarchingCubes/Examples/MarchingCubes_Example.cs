@@ -7,8 +7,22 @@ using UnityEngine;
 /// </summary>
 public class MarchingCubes_Example : MonoBehaviour
 {
+    public enum SamplingFunction
+    {
+        PerlinNoise,
+        Sphere,
+        Box,
+        Box1,
+        Box2,
+        Box3,
+        Box4,
+        Box5,
+        Box6,
+        Box7,
+    }
+
     [Header("Data")]
-    public bool UseSamplingFunction = false;
+    public SamplingFunction samplingFunction = SamplingFunction.PerlinNoise;
 
     [Header("Marching Cubes")]
     [Range(1, 100)] public int GridResolution = 100;
@@ -26,6 +40,7 @@ public class MarchingCubes_Example : MonoBehaviour
 
     MarchingCubes2 mc = new();
     float[,,] bufferGrid;
+    Vector3 gridOrigin;
 
     void Update()
     {
@@ -52,13 +67,14 @@ public class MarchingCubes_Example : MonoBehaviour
         mc.Setup(GridResolution, bufferGrid);
 
         // Run
+        gridOrigin = transform.position + GridOriginOffset;
         if (Interpolate)
         {
-            (vertices, indices) = mc.MarchCubesInterpolate(GridOriginOffset, BinaryThreshold, GridSize);
+            (vertices, indices) = mc.MarchCubesInterpolate(gridOrigin, BinaryThreshold, GridSize);
         }
         else
         {
-            (vertices, indices) = mc.MarchCubes(GridOriginOffset, BinaryThreshold, GridSize);
+            (vertices, indices) = mc.MarchCubes(gridOrigin, BinaryThreshold, GridSize);
         }
 
         // Create Mesh
@@ -118,73 +134,101 @@ public class MarchingCubes_Example : MonoBehaviour
         bufferGrid = new float[GridResolution + 1, GridResolution + 1, GridResolution + 1];
 
         // Set buffer
-        if (UseSamplingFunction)
+        switch (samplingFunction)
         {
-            for (int x = 0; x <= GridResolution; x++)
-            {
-                for (int y = 0; y <= GridResolution; y++)
+            case SamplingFunction.PerlinNoise:
+
+                for (int x = 0; x <= GridResolution; x++)
                 {
-                    for (int z = 0; z <= GridResolution; z++)
+                    for (int y = 0; y <= GridResolution; y++)
                     {
-                        var t = GridResolution + 1;
-                        Vector3 offset = new Vector3(
-                            (x - t / 2f) * GridSize/ GridResolution,
-                            (y - t / 2f) * GridSize / GridResolution,
-                            (z - t / 2f) * GridSize / GridResolution);
-                        bufferGrid[x, y, z] = Sphere_Implicit(offset.x, offset.y, offset.z);
+                        for (int z = 0; z <= GridResolution; z++)
+                        {
+                            bufferGrid[x, y, z] = DensityFunc.PerlinNoise3D(
+                             Time.time + ((x + NoiseOffset.x + Mathf.Epsilon) * NoiseResolution),
+                             Time.time + ((y + NoiseOffset.y + Mathf.Epsilon) * NoiseResolution),
+                             Time.time + ((z + NoiseOffset.z + Mathf.Epsilon) * NoiseResolution));
+                        }
                     }
                 }
-            }
-        }
-        else
-        {
-            for (int x = 0; x <= GridResolution; x++)
-            {
-                for (int y = 0; y <= GridResolution; y++)
+
+                return;
+            case SamplingFunction.Sphere:
+                var radius = 0.5f;
+                for (int x = 0; x <= GridResolution; x++)
                 {
-                    for (int z = 0; z <= GridResolution; z++)
+                    for (int y = 0; y <= GridResolution; y++)
                     {
-                        bufferGrid[x, y, z] = PerlinNoise3D(
-                         Time.time + ((x + NoiseOffset.x + Mathf.Epsilon) * NoiseResolution),
-                         Time.time + ((y + NoiseOffset.y + Mathf.Epsilon) * NoiseResolution),
-                         Time.time + ((z + NoiseOffset.z + Mathf.Epsilon) * NoiseResolution));
+                        for (int z = 0; z <= GridResolution; z++)
+                        {
+                            var t = GridResolution + 1;
+                            Vector3 offset = new Vector3(
+                                (x - t / 2f) * GridSize / GridResolution,
+                                (y - t / 2f) * GridSize / GridResolution,
+                                (z - t / 2f) * GridSize / GridResolution);
+                            bufferGrid[x, y, z] = DensityFunc.Sphere(offset, radius);
+                        }
                     }
                 }
-            }
+
+                return;
+            case SamplingFunction.Box:
+                var boxSize = new Vector3(0.45f, 0.45f, 0.45f);
+                for (int x = 0; x <= GridResolution; x++)
+                {
+                    for (int y = 0; y <= GridResolution; y++)
+                    {
+                        for (int z = 0; z <= GridResolution; z++)
+                        {
+                            var t = GridResolution + 1;
+                            Vector3 offset = new Vector3(
+                                (x - t / 2f) * GridSize / GridResolution,
+                                (y - t / 2f) * GridSize / GridResolution,
+                                (z - t / 2f) * GridSize / GridResolution);
+                            bufferGrid[x, y, z] = DensityFunc.Box(offset, boxSize);
+                        }
+                    }
+                }
+
+                return;
+
+            case SamplingFunction.Box1:
+                var boxSize2 = new Vector3(0.45f, 0.45f, 0.45f);
+                for (int x = 0; x <= GridResolution; x++)
+                {
+                    for (int y = 0; y <= GridResolution; y++)
+                    {
+                        for (int z = 0; z <= GridResolution; z++)
+                        {
+                            var t = GridResolution + 1;
+                            Vector3 offset = new Vector3(
+                                (x - t / 2f) * GridSize / GridResolution,
+                                (y - t / 2f) * GridSize / GridResolution,
+                                (z - t / 2f) * GridSize / GridResolution);
+                            bufferGrid[x, y, z] = -DensityFunc.Box_Implicit(offset.x, offset.y, offset.z);
+                        }
+                    }
+                }
+
+                return;
+            default:
+
+                return;
         }
 
-        float PerlinNoise3D(float x, float y, float z)
-        {
-            float xy = Mathf.PerlinNoise(x, y);
-            float xz = Mathf.PerlinNoise(x, z);
-            float yz = Mathf.PerlinNoise(y, z);
-            float yx = Mathf.PerlinNoise(y, x);
-            float zx = Mathf.PerlinNoise(z, x);
-            float zy = Mathf.PerlinNoise(z, y);
-
-            return (xy + xz + yz + yx + zx + zy) / 6 * 2 - 1;
-        }
-
-        float Sphere_Implicit(float posX, float posY,float posZ)
-        {
-            float r = 0.5f;
-            float x = posX;
-            float y = posY;
-            float z = posZ;
-
-            return (r * r - x * x - y * y - z * z);
-        }
+        
     }
 
     void OnDrawGizmos()
     {
-         DrawDebugGrid(GridOriginOffset, GridSize);
+        gridOrigin = transform.position + GridOriginOffset;
+        DrawDebugGrid(gridOrigin, GridSize);
     }
 
     void DrawDebugGrid(Vector3 originOffset, float size)
     {
         Gizmos.color = Color.red;
         var size3 = new Vector3(size, size, size);
-        Gizmos.DrawWireCube(transform.position + size3 / 2, size3);
+        Gizmos.DrawWireCube(originOffset + size3 / 2, size3);
     }
 }

@@ -46,7 +46,7 @@ public class MarchingCubes2
                         var gridIndex = new Vector3Int(x, y, z) + CornerOffsetTable[i];
                         var cornerValue = bufferGrid[gridIndex.x, gridIndex.y, gridIndex.z];
 
-                        if (cornerValue <= binaryThreshold)
+                        if (cornerValue >= binaryThreshold)
                         {
                             bitflag |= 1 << i;
                         }
@@ -107,7 +107,7 @@ public class MarchingCubes2
                         var gridIndex = new Vector3Int(x, y, z) + CornerOffsetTable[i];
                         var cornerValue = bufferGrid[gridIndex.x, gridIndex.y, gridIndex.z];
 
-                        if (cornerValue <= binaryThreshold)
+                        if (cornerValue >= binaryThreshold)
                         {
                             bitflag |= 1 << i;
                         }
